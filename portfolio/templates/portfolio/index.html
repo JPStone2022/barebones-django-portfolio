@@ -38,7 +38,7 @@
     <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20 md:py-32">
         <div class="container mx-auto px-6 text-center">
             <h1 class="text-4xl md:text-6xl font-bold mb-4">{{ user_profile.full_name }}</h1>
-            <p class="text-xl md:text-2xl mb-8">Passionate Deep Learning Engineer & AI Researcher & Data Scientist</p>
+            <p class="text-xl md:text-2xl mb-8">{{ user_profile.tagline|default:"Passionate Developer & Innovator" }}</p>
             {# Button linking to projects page #}
             <a href="{% url 'portfolio:all_projects' %}"
                class="inline-block bg-white text-blue-600 font-semibold py-3 px-6 rounded-lg shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-700 focus:ring-white transition duration-300">
@@ -360,13 +360,13 @@
             {# Social Links with Icons #}
             <div class="flex justify-center items-center space-x-6 text-lg">
                 {# LinkedIn #}
-                <a href="https://linkedin.com/in/julianpstone" target="_blank" rel="noopener noreferrer" aria-label="{{ user_profile.full_name }} on LinkedIn" class="flex items-center hover:text-blue-400 transition duration-300 focus:outline-none focus:ring-1 focus:ring-blue-400 rounded p-1">
+                <a href="{{ user_profile.linkedin_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ user_profile.full_name }} on LinkedIn" class="flex items-center hover:text-blue-400 transition duration-300 focus:outline-none focus:ring-1 focus:ring-blue-400 rounded p-1">
                     <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                     LinkedIn
                 </a>
                 <span class="text-gray-500">|</span>
                 {# GitHub #}
-                <a href="https://github.com/JPStone2022" target="_blank" rel="noopener noreferrer" aria-label="{{ user_profile.full_name }} on GitHub" class="flex items-center hover:text-blue-400 transition duration-300 focus:outline-none focus:ring-1 focus:ring-blue-400 rounded p-1">
+                <a href="{{ user_profile.github_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ user_profile.full_name }} on GitHub" class="flex items-center hover:text-blue-400 transition duration-300 focus:outline-none focus:ring-1 focus:ring-blue-400 rounded p-1">
                     <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.5.49.09.665-.217.665-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.446-1.134-1.089-1.437-1.089-1.437-.89-.608.067-.595.067-.595.985.07 1.505.992 1.505.992.875 1.508 2.292 1.072 2.85.819.089-.636.341-1.072.619-1.319-2.174-.247-4.456-1.089-4.456-4.843 0-1.071.383-1.947 1.01-2.632-.101-.248-.438-1.247.096-2.59 0 0 .823-.263 2.696.992a9.403 9.403 0 012.45-.33c.83.009 1.66.11 2.45.33 1.873-1.255 2.696-.992 2.696-.992.535 1.343.2 2.342.096 2.59.629.685 1.01 1.561 1.01 2.632 0 3.763-2.286 4.594-4.464 4.835.35.308.662.923.662 1.857 0 1.339-.012 2.418-.012 2.747 0 .268.174.578.67.48C19.137 20.195 22 16.44 22 12.017 22 6.484 17.523 2 12 2z" clip-rule="evenodd"/></svg>
                     GitHub
                 </a>

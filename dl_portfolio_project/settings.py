@@ -13,12 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- Explicitly load .env from the project root ---
 dotenv_path = BASE_DIR / '.env'
 
-if dotenv_path.is_file():
-    print(f".env file found at: {dotenv_path}")
-    load_dotenv(dotenv_path=dotenv_path, override=True) # Use override=True for testing if needed
-else:
-    print(f".env file NOT found at: {dotenv_path}")
-# ----------------------------------------------------
+load_dotenv(dotenv_path=dotenv_path, override=True) # Use override=True for testing if needed
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Read secret key from environment variable in production
@@ -26,25 +21,19 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-=your-default-develop
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Set DEBUG to False unless an environment variable named 'DEBUG' is set to exactly 'True'
-#DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-DEBUG = 'True'
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
 # Update ALLOWED_HOSTS based on environment
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split(' ')
-#ALLOWED_HOSTS = [os.environ.get('PYTHONANYWHERE_DOMAIN')] # Add your domain/IP in production
+
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    
 # Add your custom domain here if you set one up later
 # CUSTOM_DOMAIN = os.environ.get('CUSTOM_DOMAIN')
 # if CUSTOM_DOMAIN:
 #     ALLOWED_HOSTS.append(CUSTOM_DOMAIN)
-# Add localhost for local testing if needed (e.g., when DEBUG=False locally)
-# if DEBUG or os.environ.get('DJANGO_DEVELOPMENT'): # Add localhost if DEBUG or dev env var set
-#     ALLOWED_HOSTS.extend(['127.0.0.1', 'localhost'])
-
-# HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME') # Optional: Set this env var on Heroku
-# if HEROKU_APP_NAME:
-#     ALLOWED_HOSTS.append(f"{HEROKU_APP_NAME}.herokuapp.com")/ugfg
 
 # Application definition
 
@@ -131,8 +120,6 @@ DATABASES = {
     )
 }
 
-#print("DEBUG DATABASES:", DATABASES)
-
 
 # Password validation
 # https://docs.djangoproject.com/en/stable/ref/settings/#auth-password-validators
@@ -165,17 +152,16 @@ MEDIA_ROOT = BASE_DIR / 'mediafiles' # Absolute filesystem path to the directory
 
 # Staticfiles storage using WhiteNoise (Recommended for Render)
 # For Django 4.2+
-# STORAGES = {
-#     "staticfiles": {
-#         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-#     },
-# # If you use django-storages for media files (e.g., S3), configure default here:
-#     "default": {
-#      "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-#     },
-#     }
-# # For Django < 4.2, use this instead of STORAGES["staticfiles"]:
-# # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+# If you use django-storages for media files (e.g., S3), configure default here:
+    "default": {
+     "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    }
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/stable/ref/settings/#default-auto-field
@@ -204,22 +190,12 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 SERVER_EMAIL = os.environ.get('SERVER_EMAIL', EMAIL_HOST_USER)
 # ADMINS = [('Your Name', 'your_admin_email@example.com')] # Optional: For site error notifications
 
-# Default to 'False' string so that `== 'True'` evaluates to False if env var not set
-# CSRF_COOKIE_SECURE = os.environ.get('DJANGO_CSRF_COOKIE_SECURE', 'False') == 'True'
-# SESSION_COOKIE_SECURE = os.environ.get('DJANGO_SESSION_COOKIE_SECURE', 'False') == 'True'
-# SECURE_SSL_REDIRECT = os.environ.get('DJANGO_SECURE_SSL_REDIRECT', 'False') == 'True'
-
-# For HSTS, only enable if you are sure and understand the implications.
-# These should generally only be True in production HTTPS environments.
-# SECURE_HSTS_SECONDS = int(os.environ.get('DJANGO_SECURE_HSTS_SECONDS', 0)) # Default to 0 (off)
-# if SECURE_HSTS_SECONDS: # Only set these if HSTS is enabled
-#     SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get('DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS', 'True') == 'True'
-#     SECURE_HSTS_PRELOAD = os.environ.get('DJANGO_SECURE_HSTS_PRELOAD', 'True') == 'True'
-
-# SECURE_PROXY_SSL_HEADER: Only needed if Django is behind a reverse proxy that terminates SSL.
-# Render handles this, so you might need it. Check Render's documentation.
-# if os.environ.get('DJANGO_SECURE_PROXY_SSL_HEADER_ENABLED', 'False') == 'True':
-#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    # ... other production security settings ...
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') # Likely needed for Render
 
 LOGGING = {
     'version': 1,
