@@ -1,3 +1,10 @@
+# Node.js
+static_src/node_modules/
+npm-debug.log
+yarn-error.log
+
+portfolio/static/portfolio/css/styles.css
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
