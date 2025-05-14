@@ -1,0 +1,40 @@
+# render.yaml - Defines services for Render Blueprint deployment
+
+databases:
+  # Define the PostgreSQL database service
+  - name: portfolio-db          # Choose a name for this database service
+    databaseName: portfolio_prod # Choose a name for the actual database
+    user: portfolio_user       # Choose a username
+    plan: free                 # Use 'free' or a paid plan like 'starter'
+    # region: frankfurt        # Optional: Specify geographic region
+
+services:
+  # Define the Django web service
+  - type: web                   # Service type
+    name: portfolio-web         # Choose a name for this web service
+    env: python                 # Runtime environment
+    # region: frankfurt        # Optional: Match the database region
+    plan: free                  # Use 'free' or a paid plan
+    # Commands executed during the build phase
+    buildCommand: "./build.sh"
+    # Command used to start the application server
+    startCommand: "gunicorn dl_portfolio_project.wsgi:application" # IMPORTANT: Ensure 'dl_portfolio_project' matches your inner project folder name
+    # Environment variables for the web service
+    envVars:
+      - key: DATABASE_URL       # Used by dj-database-url in settings.py
+        fromDatabase:
+          name: portfolio-db    # Must match the 'name' of the database service above
+          property: connectionString # Injects the database connection URL
+      - key: SECRET_KEY         # Used by settings.py
+        generateValue: true     # Render generates a secure key
+      - key: PYTHON_VERSION     # Specify your Python version
+        value: 3.11.5           # Use the version matching your local dev
+      - key: WEB_CONCURRENCY    # Optional: Number of Gunicorn workers
+        value: 4                # Adjust based on Render plan resources
+      # --- Add other environment variables needed by settings.py ---
+      # e.g., EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL, etc.
+      # - key: EMAIL_HOST_PASSWORD
+      #   value: your_actual_password_or_key # Or use Render Secret Files
+      # - key: DEBUG # Explicitly set DEBUG to False in production
+      #   value: False
+

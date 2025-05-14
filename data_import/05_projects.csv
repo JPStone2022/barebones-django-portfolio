@@ -1,0 +1,4 @@
+title,slug,description,image_url,results_metrics,challenges,lessons_learned,code_snippet,code_language,github_url,demo_url,paper_url,order,is_featured,long_description_markdown,skills,topics
+Basic Image Analysis,basic-image-analysis,this is news,https://placehold.co/600x400/f97316/FFFFFF?text=Basic+Image+Analysis,none,none,none,none,Python,,,,0,,"stuff should go here","Python,Matplotlib,NumPy",Data Science
+Sales Data Analysis,sales-data-analysis,I am testing this out,https://placehold.co/600x400/f97316/FFFFFF?text=Sales+Data+Analysis,very,hard,lots,none,Python,,,,,1,,"Python,Pandas,NumPy",Data Science
+Data Analysis,data-analysis,I am testing this out,https://placehold.co/600x400/f97316/FFFFFF?text=Sales+Data+Analysis,very,hard,lots,none,Python,,,,,1,,"Python,Pandas,NumPy",Data Science

@@ -1,0 +1,63 @@
+{# skills/templates/skills/skill_detail.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{% block title %}{{ skill.name }} Skill Details - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Skill details and related projects." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"skill, portfolio, project" }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <article class="max-w-6xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-blue-900/20 transition-colors duration-300 ease-in-out">
+        <h1 class="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">{{ skill.name }}</h1>
+        {% if skill.category %}
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Category: {{ skill.category.name }}</p>
+        {% endif %}
+
+        {% if skill.description %}
+            <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200 mt-6 mb-4">Details & Experience</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                {{ skill.description|linebreaks }}
+            </div>
+        {% else %}
+             <p class="text-gray-600 dark:text-gray-400 italic mt-6">No detailed description provided for this skill.</p>
+        {% endif %}
+
+        {# Display Related Projects #}
+        {% if projects %}
+        <section class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
+            <h2 class="text-2xl font-semibold mb-4 bg-gradient-to-r from-gray-700 to-gray-900 dark:from-gray-300 dark:to-gray-100 bg-clip-text text-transparent">Related Projects</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {% for project in projects %}
+                    <a href="{{ project.get_absolute_url }}" class="block p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow hover:shadow-md dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transform hover:scale-[1.02] transition duration-200 ease-in-out">
+                        <h3 class="font-semibold text-blue-700 dark:text-blue-400 hover:underline">{{ project.title }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ project.description|truncatewords:15 }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {# Display Related Demos (NEW SECTION) #}
+        {% if demos %}
+        <section class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
+            <h2 class="text-2xl font-semibold mb-4 bg-gradient-to-r from-pink-500 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent">Related Demos</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {% for demo in demos %}
+                    <a href="{{ demo.get_absolute_url }}" class="block p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow hover:shadow-md dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-offset-gray-800 transform hover:scale-[1.02] transition duration-200 ease-in-out">
+                        <h3 class="font-semibold text-purple-700 dark:text-purple-400 hover:underline">{{ demo.title }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ demo.description|truncatewords:15 }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+        {# End Related Demos #}
+
+    </article>
+
+    <div class="text-center mt-12">
+        <a href="{% url 'skills:skill_list' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to All Skills</a>
+    </div>
+</div>
+{% endblock %}

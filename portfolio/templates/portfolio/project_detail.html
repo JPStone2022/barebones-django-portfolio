@@ -1,0 +1,210 @@
+{# portfolio/templates/portfolio/project_detail.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% load markdownify %} {# Load markdownify for Markdown rendering #}
+
+{# --- Meta Tags --- #}
+{% block title %}
+    {{ project.title|default:"Project Details" }}
+    {% if user_profile and user_profile.full_name %}
+        | {{ user_profile.full_name }}'s Portfolio
+    {% else %}
+        | My Portfolio
+    {% endif %}
+{% endblock title %}
+
+{% block meta_description %}
+    {# Use project.description for meta, strip tags and truncate if it's Markdown #}
+    {% if project.description %}
+        {{ project.description|markdownify|striptags|truncatewords:25 }}
+    {% else %}
+        Detailed information about the project: {{ project.title|default:"Untitled Project" }}.
+    {% endif %}
+{% endblock meta_description %}
+
+{% block meta_keywords %}
+    project, {{ project.title|lower|default:"details" }}
+    {% if project.skills.exists %}
+        {% for skill in project.skills.all %}, {{ skill.name|lower }}{% endfor %}
+    {% endif %}
+    {% if project.topics.exists %}
+        {% for topic in project.topics.all %}, {{ topic.name|lower }}{% endfor %}
+    {% endif %}
+    , portfolio
+    {% if user_profile and user_profile.full_name %}
+        , {{ user_profile.full_name|lower }}
+    {% endif %}
+{% endblock meta_keywords %}
+{# --- End Meta Tags --- #}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-12">
+    <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-800 dark:text-gray-100 mb-10">
+        {{ project.title }}
+    </h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {# Main Content Area for Project Details #}
+        <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg dark:shadow-blue-900/20 space-y-8 transition-colors duration-300 ease-in-out group">
+
+            {# Project Image #}
+            {% if project.image_url %}
+            <div class="mb-8">
+                <img src="{{ project.image_url|default:'https://placehold.co/800x500/CCCCCC/FFFFFF?text=Project+Image' }}"
+                     alt="{{ project.title }} Visual"
+                     class="w-full h-auto max-h-[500px] object-contain rounded-md shadow transition duration-300 ease-in-out group-hover:shadow-xl"
+                     loading="lazy"
+                     onerror="this.onerror=null; this.src='https://placehold.co/800x500/E0E0E0/BDBDBD?text=Image+Not+Found';">
+            </div>
+            {% endif %}
+
+            {# Short Description (from project.description) #}
+            {% if project.description %}
+            <section id="project-description" aria-labelledby="project-description-heading">
+                <h2 id="project-description-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                    Project Overview
+                </h2>
+                <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {{ project.description|markdownify }}
+                </div>
+            </section>
+            {% endif %}
+
+            {# Long Description (from project.long_description_markdown) #}
+            {% if project.long_description_markdown %}
+            <section id="project-long-description" aria-labelledby="project-long-description-heading" class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h2 id="project-long-description-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                    In-Depth Details
+                </h2>
+                <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {{ project.long_description_markdown|markdownify }}
+                </div>
+            </section>
+            {% endif %}
+
+            {# Results & Metrics #}
+            {% if project.results_metrics %}
+            <section id="project-results" aria-labelledby="project-results-heading" class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h2 id="project-results-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                    Results & Metrics
+                </h2>
+                <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {{ project.results_metrics|markdownify }}
+                </div>
+            </section>
+            {% endif %}
+
+            {# Challenges Faced #}
+            {% if project.challenges %}
+            <section id="project-challenges" aria-labelledby="project-challenges-heading" class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h2 id="project-challenges-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                    Challenges Faced
+                </h2>
+                <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {{ project.challenges|markdownify }}
+                </div>
+            </section>
+            {% endif %}
+
+            {# Lessons Learned #}
+            {% if project.lessons_learned %}
+            <section id="project-lessons" aria-labelledby="project-lessons-heading" class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h2 id="project-lessons-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                    Lessons Learned
+                </h2>
+                <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {{ project.lessons_learned|markdownify }}
+                </div>
+            </section>
+            {% endif %}
+
+            {# Code Snippet Example #}
+            {% if project.code_snippet %}
+            <section id="project-code" aria-labelledby="project-code-heading" class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h2 id="project-code-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                    Code Snippet Example
+                </h2>
+                {# Ensure Prism.js CSS is loaded in base.html for styling #}
+                {# The 'language-xxxx' class is used by Prism.js for syntax highlighting #}
+                {# The 'escape' filter is important here to prevent XSS if code_snippet contains HTML-like characters #}
+                <pre class="rounded-md shadow"><code class="language-{{ project.code_language|default:'markup' }} rounded-md">{{ project.code_snippet|escape }}</code></pre>
+            </section>
+            {% endif %}
+        </div>
+
+        {# Sidebar for Details, Skills, and Links #}
+        <aside class="lg:col-span-1 space-y-6">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-blue-900/20 transition-colors duration-300 ease-in-out">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    Project Quick Info
+                </h3>
+                <div class="space-y-3 text-sm text-gray-600 dark:text-gray-400">
+                    <p><strong>Date Created:</strong> {{ project.date_created|date:"F j, Y" }}</p>
+
+                    <div>
+                        <strong class="block mb-1 text-gray-700 dark:text-gray-300">Topics:</strong>
+                        {% if project.topics.all %}
+                            <div class="flex flex-wrap gap-2">
+                                {% for topic in project.topics.all %}
+                                    <a href="{{ topic.get_absolute_url }}" class="inline-block bg-indigo-100 dark:bg-indigo-900 hover:bg-indigo-200 dark:hover:bg-indigo-800 text-indigo-800 dark:text-indigo-200 text-xs font-semibold px-2.5 py-1 rounded-full transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+                                        {{ topic.name }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <span class="italic">N/A</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-3">
+                        <strong class="block mb-1 text-gray-700 dark:text-gray-300">Skills Used:</strong>
+                        {% if project.skills.all %}
+                            <div class="flex flex-wrap gap-2">
+                                {% for skill in project.skills.all %}
+                                    <a href="{% url 'skills:skill_detail' slug=skill.slug %}" class="inline-block bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 text-xs font-semibold px-2.5 py-1 rounded-full transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
+                                        {{ skill.name }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <span class="italic">No specific skills listed.</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-blue-900/20 transition-colors duration-300 ease-in-out">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    External Links
+                </h3>
+                <div class="space-y-3">
+                    {% if project.github_url %}
+                        <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="flex items-center text-blue-600 dark:text-blue-400 hover:underline font-medium focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-blue-500 dark:focus:ring-offset-gray-800 rounded">
+                            <i class="fab fa-github fa-fw mr-2"></i> View Code on GitHub
+                        </a>
+                    {% endif %}
+                    {% if project.demo_url %}
+                        <a href="{{ project.demo_url }}" target="_blank" rel="noopener noreferrer" class="flex items-center text-green-600 dark:text-green-400 hover:underline font-medium focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-green-500 dark:focus:ring-offset-gray-800 rounded">
+                            <i class="fas fa-external-link-alt fa-fw mr-2"></i> View Live Demo
+                        </a>
+                    {% endif %}
+                    {% if project.paper_url %}
+                        <a href="{{ project.paper_url }}" target="_blank" rel="noopener noreferrer" class="flex items-center text-purple-600 dark:text-purple-400 hover:underline font-medium focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-purple-500 dark:focus:ring-offset-gray-800 rounded">
+                            <i class="fas fa-file-alt fa-fw mr-2"></i> Read Related Paper
+                        </a>
+                    {% endif %}
+                    {% if not project.github_url and not project.demo_url and not project.paper_url %}
+                        <p class="text-sm text-gray-500 dark:text-gray-400 italic">No external links provided for this project.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <div class="text-center mt-16">
+        <a href="{% url 'portfolio:all_projects' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">
+            &larr; Back to All Projects
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Explore this demo." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"demo, project, details" }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <header class="text-center mb-12">
+        {# Use the title from the Demo object #}
+        <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+            {{ demo_page.page_meta_title|default:demo_page.title }}
+        </h1>
+        {% if demo_page.meta_description %}
+            <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                {{ demo_page.meta_description }}
+            </p>
+        {% endif %}
+    </header>
+
+    <article class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg dark:shadow-purple-900/20">
+        {% if error_message %}
+            <div class="mb-6 p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200" role="alert">
+                <strong>Error:</strong> {{ error_message }}
+            </div>
+        {% endif %}
+
+        {% if not sections and not error_message %}
+            <div class="mb-6 p-4 rounded-lg bg-yellow-100 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-200" role="alert">
+                No content sections found for this demo.
+            </div>
+        {% endif %}
+
+        {% for section in sections %}
+            <section class="mb-8 pb-6 {% if not forloop.last %}border-b border-gray-200 dark:border-gray-700{% endif %}">
+                {% if section.section_title %}
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                        {{ section.section_title }}
+                    </h2>
+                {% endif %}
+
+                {% if section.section_content_html %}
+                    <div class="prose dark:prose-invert lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
+                        {{ section.section_content_html|safe }}
+                    </div>
+                {% endif %}
+
+                {% if section.code_snippet %}
+                    <div class="mt-6">
+                        {% if section.code_snippet_title %}
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                                {{ section.code_snippet_title }}
+                            </h3>
+                        {% endif %}
+                        <div class="bg-gray-900 dark:bg-gray-800 text-gray-100 dark:text-gray-200 p-4 rounded-md shadow-md overflow-x-auto">
+                            <pre><code class="language-{{ section.code_language|default:'plaintext' }}">{{ section.code_snippet }}</code></pre>
+                        </div>
+                        {% if section.code_snippet_explanation %}
+                            <div class="mt-2 text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 p-3 rounded-md">
+                                {{ section.code_snippet_explanation|safe }} {# Use safe if explanation can contain HTML #}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </section>
+        {% endfor %}
+        
+        <div class="text-center mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline">&larr; Back to Home</a>
+        </div>
+    </article>
+</div>
+
+{# Include Prism.js for syntax highlighting if you use it #}
+{# Add these to your base.html or here if only for this page #}
+{# <link href="{% static 'path/to/prism.css' %}" rel="stylesheet" /> #}
+{# <script src="{% static 'path/to/prism.js' %}"></script> #}
+{# Ensure you run `Prism.highlightAll();` after page load if using Prism.js #}
+
+{% endblock %}

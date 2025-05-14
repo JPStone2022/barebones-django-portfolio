@@ -1,0 +1,101 @@
+{# demos/templates/demos/data_analysis_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Demonstration of Simple CSV Data Analyzer with basic descriptive statistics and a distribution plot." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"data analyser, CSV file analysis, descriptive statistics, distribution plot" }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-green-500 to-blue-500 dark:from-green-400 dark:to-blue-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10">
+        Upload a small CSV file (with headers) to get some basic descriptive statistics and a distribution plot of the first numerical column.
+    </p>
+
+    {# Display Error Messages #}
+    {% if error_message %}
+        <div class="max-w-2xl mx-auto mb-6 p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200" role="alert">
+            <strong>Error:</strong> {{ error_message }}
+        </div>
+    {% endif %}
+
+    {# Upload Form Card #}
+    <div class="max-w-xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-green-900/20 transition-colors duration-300 ease-in-out mb-10">
+        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Upload CSV</h2>
+        <form method="post" enctype="multipart/form-data" action="{% url 'demos:data_analyser' %}">
+            {% csrf_token %}
+            <div class="mb-4">
+                {{ form.csv_file.label_tag }}
+                {{ form.csv_file }}
+                {% if form.csv_file.help_text %}
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ form.csv_file.help_text }}</p>
+                {% endif %}
+                {% if form.csv_file.errors %}
+                    <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.csv_file.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            <button type="submit"
+                    class="w-full bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                Analyze Data
+            </button>
+        </form>
+    </div>
+
+    {# Results Section #}
+    {% if analysis_results %}
+    <div class="max-w-4xl mx-auto mt-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-green-900/20 transition-colors duration-300 ease-in-out">
+        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">Analysis Results for: <span class="font-mono text-blue-600 dark:text-blue-400 text-xl">{{ analysis_results.filename }}</span></h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {# Basic Info #}
+            <div class="text-sm">
+                <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Basic Info:</h3>
+                <p class="text-gray-600 dark:text-gray-400">Shape: {{ analysis_results.shape.0 }} rows, {{ analysis_results.shape.1 }} columns</p>
+                <p class="text-gray-600 dark:text-gray-400 mt-1">Columns: {{ analysis_results.columns|join:", " }}</p>
+            </div>
+
+            {# DataFrame Info Output #}
+            <div class="text-sm">
+                 <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Column Types & Non-Nulls:</h3>
+                 <pre class="bg-gray-100 dark:bg-gray-700 p-3 rounded text-xs text-gray-700 dark:text-gray-300 overflow-x-auto"><code>{{ analysis_results.info }}</code></pre>
+            </div>
+        </div>
+
+        {# Head Preview #}
+        <div class="mt-6">
+            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Data Preview (First 5 Rows):</h3>
+            <div class="overflow-x-auto shadow rounded-lg border border-gray-200 dark:border-gray-700">
+                {{ analysis_results.head|safe }} {# Render HTML table from pandas #}
+            </div>
+        </div>
+
+        {# Descriptive Stats #}
+        {% if analysis_results.describe_html %}
+        <div class="mt-6">
+            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Descriptive Statistics (Numerical Columns):</h3>
+             <div class="overflow-x-auto shadow rounded-lg border border-gray-200 dark:border-gray-700">
+                {{ analysis_results.describe_html|safe }} {# Render HTML table from pandas #}
+            </div>
+        </div>
+        {% endif %}
+
+        {# Plot #}
+        {% if analysis_results.plot_url %}
+        <div class="mt-6 text-center border-t border-gray-200 dark:border-gray-700 pt-6">
+            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Distribution Plot (First Numerical Column):</h3>
+            <img src="{{ analysis_results.plot_url }}" alt="Data distribution plot" class="max-w-full h-auto mx-auto rounded border border-gray-200 dark:border-gray-700 bg-white p-1 shadow">
+        </div>
+        {% endif %}
+
+    </div>
+    {% endif %} {# End analysis_results block #}
+
+     <div class="text-center mt-16">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

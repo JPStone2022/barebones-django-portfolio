@@ -1,0 +1,202 @@
+{# demos/templates/demos/feature_engineering_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{# SUGGESTION: Load humanize if you plan to use filters like intcomma, naturaltime, etc.
+   The template currently doesn't use any filters that require it. #}
+{% load humanize %}
+
+{% block title %}{{ page_title|default:"Feature Engineering Concepts" }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn about Feature Engineering techniques used to improve Machine Learning model performance by transforming raw data into informative features." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Feature Engineering, Machine Learning, Data Science, Data Preprocessing, Feature Scaling, Encoding, Imputation, Feature Creation" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-12"> {# Consistent padding #}
+    {# Apply gradient text to heading - Green/Blue theme #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-green-500 via-teal-500 to-cyan-500 dark:from-green-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">
+        {{ page_title|default:"Understanding Feature Engineering" }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        <strong>Feature Engineering</strong> is the process of using domain knowledge and data manipulation techniques to select, transform, and create features (input variables) from raw data to improve the performance of machine learning models. It's often considered one of the most critical and impactful steps in the ML workflow.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg dark:shadow-teal-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Why Feature Engineering? --- #}
+        <section id="why-feature-eng" aria-labelledby="why-feature-eng-heading" class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 id="why-feature-eng-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Why is Feature Engineering Important?</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>Raw data is often not in an optimal format for machine learning algorithms. Feature engineering helps bridge this gap:</p>
+                <ul>
+                    <li><strong>Improves Model Performance:</strong> Well-engineered features can expose underlying patterns more clearly to the model, leading to higher accuracy, better generalization, and more robust predictions.</li>
+                    <li><strong>Handles Data Issues:</strong> Addresses common data problems like missing values, outliers, and incompatible data types (e.g., text) that many algorithms cannot handle directly.</li>
+                    <li><strong>Reduces Complexity:</strong> Can sometimes simplify models by creating more informative features, potentially reducing the need for highly complex model architectures.</li>
+                    <li><strong>Algorithm Compatibility:</strong> Transforms data into formats required by specific algorithms (e.g., converting categorical features to numbers for linear models).</li>
+                    <li><strong>Incorporates Domain Knowledge:</strong> Allows practitioners to inject valuable domain expertise into the modeling process by creating features that capture relevant real-world relationships.</li>
+                </ul>
+                <p><strong>Quote often cited:</strong> "Coming up with features is difficult, time-consuming, requires expert knowledge. 'Applied machine learning' is basically feature engineering." - Andrew Ng</p>
+            </div>
+        </section>
+
+        {# --- Section 2: Common Techniques --- #}
+        <section id="fe-techniques" aria-labelledby="fe-techniques-heading" class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 id="fe-techniques-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Common Feature Engineering Techniques</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>Numerous techniques exist, often applied in combination:</p>
+            </div>
+
+            {# Subsection: Handling Missing Data #}
+            <div class="mb-6 pl-4 border-l-4 border-teal-500 dark:border-teal-400">
+                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">a) Handling Missing Data (Imputation)</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Replacing missing values (NaNs) with estimated or representative values.</p>
+                <ul class="text-sm text-gray-700 dark:text-gray-300 list-disc list-inside space-y-1">
+                    <li><strong>Mean/Median/Mode Imputation:</strong> Replace missing numerical values with the mean or median, or categorical values with the mode (most frequent value). Simple but can distort variance.</li>
+                    <li><strong>Constant Value:</strong> Replace missing values with a fixed constant (e.g., 0, -1, or "Missing").</li>
+                    <li><strong>Model-Based Imputation:</strong> Use other features to predict the missing value using an ML model (e.g., KNNImputer, IterativeImputer in Scikit-learn). More complex but potentially more accurate.</li>
+                </ul>
+                <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mt-3 mb-1">Conceptual Snippet (Mean Imputation with Pandas):</h4>
+                <pre class="text-xs block overflow-x-auto p-3 bg-gray-100 dark:bg-gray-900 rounded-md"><code class="language-python">
+import pandas as pd
+import numpy as np
+
+data = {'age': [25, 30, np.nan, 35], 'income': [50000, 60000, 75000, np.nan]}
+df = pd.DataFrame(data)
+
+# Calculate mean age (excluding NaN)
+mean_age = df['age'].mean()
+print(f"Mean age: {mean_age:.1f}")
+
+# Fill missing 'age' values with the mean
+df['age'].fillna(mean_age, inplace=True)
+print("DataFrame after age imputation:")
+print(df)
+#   age   income
+# 0  25.0  50000.0
+# 1  30.0  60000.0
+# 2  30.0  75000.0  <- NaN replaced with mean (30.0)
+# 3  35.0      NaN
+</code></pre>
+            </div>
+
+            {# Subsection: Handling Categorical Data #}
+            <div class="mb-6 pl-4 border-l-4 border-teal-500 dark:border-teal-400">
+                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">b) Handling Categorical Data (Encoding)</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Converting non-numerical category labels into numerical representations.</p>
+                 <ul class="text-sm text-gray-700 dark:text-gray-300 list-disc list-inside space-y-1">
+                    <li><strong>One-Hot Encoding:</strong> Creates new binary (0/1) columns for each category. Prevents implying order but can lead to high dimensionality. (Scikit-learn `OneHotEncoder`, Pandas `get_dummies`).</li>
+                    <li><strong>Label Encoding:</strong> Assigns a unique integer to each category (e.g., 'Red': 0, 'Green': 1, 'Blue': 2). Simple but implies an ordinal relationship which might mislead some models. (Scikit-learn `LabelEncoder`).</li>
+                    <li><strong>Ordinal Encoding:</strong> Similar to Label Encoding, but used when categories have a meaningful order (e.g., 'Low': 0, 'Medium': 1, 'High': 2). (Scikit-learn `OrdinalEncoder`).</li>
+                    <li><strong>Target Encoding:</strong> Replaces category with the mean of the target variable for that category. Powerful but prone to overfitting if not handled carefully.</li>
+                </ul>
+                 <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mt-3 mb-1">Conceptual Snippet (One-Hot Encoding with Pandas):</h4>
+                <pre class="text-xs block overflow-x-auto p-3 bg-gray-100 dark:bg-gray-900 rounded-md"><code class="language-python">
+import pandas as pd
+
+data = {'color': ['Red', 'Green', 'Blue', 'Green'], 'value': [10, 15, 5, 12]}
+df = pd.DataFrame(data)
+
+# Create dummy variables for the 'color' column
+color_dummies = pd.get_dummies(df['color'], prefix='color', drop_first=False) # drop_first=True avoids multicollinearity
+print("One-Hot Encoded columns:")
+print(color_dummies)
+#    color_Blue  color_Green  color_Red
+# 0         0            0          1
+# 1         0            1          0
+# 2         1            0          0
+# 3         0            1          0
+
+# Join back with original dataframe (optional)
+# df_encoded = pd.concat([df.drop('color', axis=1), color_dummies], axis=1)
+# print("\nDataFrame after encoding:")
+# print(df_encoded)
+</code></pre>
+            </div>
+
+             {# Subsection: Feature Scaling #}
+            <div class="mb-6 pl-4 border-l-4 border-teal-500 dark:border-teal-400">
+                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">c) Feature Scaling</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Adjusting the range or distribution of numerical features.</p>
+                 <ul class="text-sm text-gray-700 dark:text-gray-300 list-disc list-inside space-y-1">
+                    <li><strong>Standardization (Z-score Scaling):</strong> Rescales features to have zero mean and unit variance. Useful for algorithms sensitive to feature scales (e.g., SVM, PCA, Linear Regression with regularization). (Scikit-learn `StandardScaler`).</li>
+                    <li><strong>Normalization (Min-Max Scaling):</strong> Rescales features to a specific range, typically [0, 1] or [-1, 1]. Useful for algorithms requiring bounded inputs (e.g., some neural networks). (Scikit-learn `MinMaxScaler`).</li>
+                 </ul>
+                 <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mt-3 mb-1">Conceptual Snippet (Standardization with Scikit-learn):</h4>
+                 <pre class="text-xs block overflow-x-auto p-3 bg-gray-100 dark:bg-gray-900 rounded-md"><code class="language-python">
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+
+# Example data (e.g., feature values)
+data = np.array([[100], [150], [120], [130], [1000]]) # Note the outlier
+
+scaler = StandardScaler()
+
+# Fit the scaler (calculates mean and std dev) and transform the data
+scaled_data = scaler.fit_transform(data)
+
+print("Original Data:\n", data.flatten())
+print("Mean:", scaler.mean_[0])
+print("Scale (Std Dev):", scaler.scale_[0])
+print("Standardized Data (Z-scores):\n", scaled_data.flatten())
+# Output shows data centered around 0 with unit variance
+</code></pre>
+            </div>
+
+            {# Subsection: Feature Creation #}
+            <div class="mb-6 pl-4 border-l-4 border-teal-500 dark:border-teal-400">
+                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">d) Feature Creation / Transformation</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Creating new features from existing ones.</p>
+                 <ul class="text-sm text-gray-700 dark:text-gray-300 list-disc list-inside space-y-1">
+                    <li><strong>Interaction Features:</strong> Combining two or more features (e.g., multiplying `price` and `quantity` to get `total_sales`).</li>
+                    <li><strong>Polynomial Features:</strong> Creating polynomial terms (e.g., square or cube) of existing features to capture non-linear relationships. (Scikit-learn `PolynomialFeatures`).</li>
+                    <li><strong>Binning/Discretization:</strong> Converting continuous numerical features into discrete categories or bins (e.g., grouping ages into 'Child', 'Adult', 'Senior').</li>
+                    <li><strong>Log Transformation:</strong> Applying a logarithm to features, often used to handle skewed distributions or reduce the impact of outliers.</li>
+                    <li><strong>Date/Time Features:</strong> Extracting components like year, month, day of week, hour from date/time columns.</li>
+                 </ul>
+            </div>
+
+             {# Subsection: Feature Extraction #}
+            <div class="pl-4 border-l-4 border-teal-500 dark:border-teal-400">
+                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">e) Feature Extraction</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Deriving new, often lower-dimensional features from complex raw data.</p>
+                 <ul class="text-sm text-gray-700 dark:text-gray-300 list-disc list-inside space-y-1">
+                    <li><strong>Text Data:</strong> Techniques like Bag-of-Words (BoW), TF-IDF (Term Frequency-Inverse Document Frequency), Word Embeddings (Word2Vec, GloVe, FastText), or outputs from Transformer models (BERT embeddings).</li>
+                    <li><strong>Image Data:</strong> Using pre-trained Convolutional Neural Networks (CNNs) to extract feature vectors, or applying techniques like SIFT, SURF, or Histogram of Oriented Gradients (HOG).</li>
+                    <li><strong>Dimensionality Reduction:</strong> Techniques like Principal Component Analysis (PCA) or t-SNE which create new, lower-dimensional features that capture most of the original data's variance or structure.</li>
+                 </ul>
+            </div>
+        </section>
+
+        {# --- Section 3: Tools --- #}
+        <section id="fe-tools" aria-labelledby="fe-tools-heading" class="mb-8 pb-6 border-gray-200 dark:border-gray-700">
+            <h2 id="fe-tools-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Tools for Feature Engineering</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>While feature engineering often involves custom code, several libraries provide powerful tools:</p>
+                <ul>
+                    <li><strong>Pandas:</strong> The workhorse for data manipulation in Python. Essential for loading, cleaning, transforming, merging, and creating features from tabular data.</li>
+                    <li><strong>NumPy:</strong> Fundamental package for numerical computation, providing efficient array operations often used under the hood by other libraries.</li>
+                    <li><strong>Scikit-learn:</strong> Offers a wide range of preprocessing tools (`sklearn.preprocessing` module for scaling, encoding, imputation, polynomial features) and feature extraction techniques (`sklearn.feature_extraction` for text, `sklearn.decomposition` for PCA). Its `Pipeline` object is crucial for chaining steps.</li>
+                    <li><strong>Feature-engine:</strong> A dedicated Python library specifically focused on providing a wide array of feature engineering techniques within a Scikit-learn compatible framework.</li>
+                    <li><strong>Category Encoders:</strong> A library providing more advanced categorical encoding techniques beyond those in Scikit-learn.</li>
+                    <li><strong>Domain-Specific Libraries:</strong> Libraries for specific data types, like NLTK/spaCy for text or OpenCV/Pillow for images, often contain relevant feature extraction tools.</li>
+                </ul>
+            </div>
+        </section>
+
+        {# --- Conclusion --- #}
+        <section id="conclusion" aria-labelledby="conclusion-heading" class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+             <h2 id="conclusion-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Conclusion</h2>
+             <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>Feature engineering is both an art and a science, blending domain knowledge with technical data manipulation skills. It's a critical, iterative process that directly impacts the success of machine learning projects.</p>
+                <p>By carefully selecting, transforming, and creating features, practitioners can significantly enhance model performance, handle diverse data types, and build more robust and interpretable AI systems. Mastering feature engineering techniques is a key skill for any effective Data Scientist or Machine Learning Engineer.</p>
+             </div>
+        </section>
+
+        {# Back to Home Link - Placed as the last element in the card #}
+        <div class="text-center mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+        </div>
+    </div> {# Closing div for main content card #}
+
+</div>
+{% endblock %}

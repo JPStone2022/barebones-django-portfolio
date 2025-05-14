@@ -1,0 +1,111 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load markdownify %} {# Ensure markdownify is loaded #}
+
+{% block title %}
+    {% if page_title %}
+        {{ page_title }}
+        {% if user_profile and user_profile.full_name %}
+            | {{ user_profile.full_name }}
+        {% endif %}
+    {% else %}
+        Colophon - How This Site Was Built
+        {% if user_profile and user_profile.full_name %}
+            | {{ user_profile.full_name }}'s Portfolio
+        {% else %}
+            | Portfolio
+        {% endif %}
+    {% endif %}
+{% endblock title %}
+
+{% block meta_description %}
+    {% if meta_description %}
+        {{ meta_description }}
+        {% if user_profile and user_profile.full_name and user_profile.full_name|lower not in meta_description|lower %}
+            This site was built by {{ user_profile.full_name }}.
+        {% endif %}
+    {% elif user_profile and user_profile.full_name %}
+        Learn about the technologies, tools, and resources used by {{ user_profile.full_name }} to build this portfolio website, including Django, Python, Tailwind CSS, and more.
+    {% else %}
+        Learn about the technologies, tools, and resources used to build this portfolio website, including Django, Python, Tailwind CSS, and more.
+    {% endif %}
+{% endblock meta_description %}
+
+{% block meta_keywords %}
+    {% if meta_keywords %}
+        {{ meta_keywords }}
+    {% else %}
+        colophon, built with, django, python, tailwind css, javascript, htmx
+    {% endif %}
+    {% if user_profile and user_profile.full_name %}
+        {% if user_profile.full_name|lower not in meta_keywords|lower %}
+            , {{ user_profile.full_name|lower }}
+        {% endif %}
+    {% endif %}
+    , portfolio
+{% endblock meta_keywords %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-12">
+    <header class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 dark:from-purple-400 dark:via-pink-400 dark:to-orange-400 bg-clip-text text-transparent mb-4">
+            Colophon: How This Site Was Built
+        </h1>
+        <p class="text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+            This page details the primary technologies, tools, services, and learning resources I've utilized (or plan to utilize for production)
+            in the creation, development, and deployment of this portfolio website. It's a living document and reflects my journey in web development and data science.
+        </p>
+    </header>
+
+    {% if grouped_entries %}
+        {% for category_display, entries in grouped_entries.items %}
+        <section class="mb-12">
+            <h2 class="text-2xl md:text-3xl font-semibold mb-8 border-b-2 border-gray-200 dark:border-gray-700 pb-3 text-gray-800 dark:text-gray-100">
+                {{ category_display }}
+            </h2>
+            <div class="space-y-6">
+                {% for entry in entries %}
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    {% if entry.icon_class %}
+                    <div class="flex-shrink-0 w-12 h-12 bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center mb-4 sm:mb-0">
+                        <i class="{{ entry.icon_class }} fa-2x"></i> {# Assuming Font Awesome or similar #}
+                    </div>
+                    {% endif %}
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                            {% if entry.url %}
+                                <a href="{{ entry.url }}" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-600 dark:hover:text-indigo-400 underline focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded">
+                                    {{ entry.name }}
+                                </a>
+                            {% else %}
+                                {{ entry.name }}
+                            {% endif %}
+                        </h3>
+                        {% if entry.description %}
+                            {# Apply markdownify filter and wrap in prose for Tailwind styling #}
+                            <div class="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-gray-400 leading-relaxed">
+                                {{ entry.description|markdownify }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-10 px-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v11.494m0 0a8.485 8.485 0 0011.494 0M12 17.747a8.485 8.485 0 01-11.494 0M12 17.747L12 6.253" /> <path stroke-linecap="round" stroke-linejoin="round" d="M12 17.747a8.485 8.485 0 01-11.494 0M12 17.747L12 6.253" /> <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253a8.485 8.485 0 0111.494 0" />
+            </svg>
+            <p class="text-xl font-medium text-gray-700 dark:text-gray-200">Colophon Details Not Available</p>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">Information about how this site was built will be added soon.</p>
+        </div>
+    {% endif %}
+
+    <div class="text-center mt-20">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

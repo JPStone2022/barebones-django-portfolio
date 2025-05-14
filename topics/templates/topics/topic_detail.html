@@ -1,0 +1,117 @@
+{# topics/templates/topics/topic_detail.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{# Load humanize if needed for other filters #}
+{% load humanize %}
+
+{# Override Meta Tags #}
+{% block title %}{{ page_title|default:topic.name }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Projects related to the topic: " }}{{ topic.name|default:"Selected Topic" }}. {{ topic.description|striptags|truncatewords:25 }}{% endblock %}
+{# IMPROVEMENT: Dynamic keywords #}
+{% block meta_keywords %}{{ meta_keywords|default:"project, portfolio, topic" }}, {{ topic.name|lower }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-12"> {# Consistent padding #}
+
+    {# Topic Title - Apply gradient text #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+        {{ topic.name }} Projects
+    </h1>
+
+    {# Optional: Topic Description #}
+    {% if topic.description %}
+    <div class="max-w-3xl mx-auto text-center text-lg text-gray-600 dark:text-gray-400 mb-12 prose dark:prose-invert">
+        {# Use |safe only if description HTML is trusted/sanitized in backend #}
+        {{ topic.description|safe }}
+    </div>
+    {% endif %}
+
+    {# Display Related Projects (using the same card style as all_projects) #}
+    {% if projects %}
+        {# Grid for project cards #}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {% for project in projects %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-indigo-900/20 overflow-hidden project-card transition-transform duration-300 ease-in-out hover:scale-[1.02] flex flex-col"> {# Added hover effect #}
+                     {# Project Image Link #}
+                     <a href="{{ project.get_absolute_url }}"
+                        aria-label="View details for project: {{ project.title }}"
+                        class="block hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-t-lg">
+                         <img src="{{ project.image_url|default:'https://placehold.co/600x400/CCCCCC/FFFFFF?text=Project+Image' }}"
+                              alt="{{ project.title }} Visual"
+                              class="w-full h-48 object-cover"
+                              loading="lazy" {# IMPROVEMENT: Added lazy loading #}
+                              onerror="this.onerror=null; this.src='https://placehold.co/600x400/E0E0E0/BDBDBD?text=Image+Not+Found';">
+                     </a>
+                     {# Card Content #}
+                     <div class="p-6 flex flex-col flex-grow">
+                         {# Project Title Link #}
+                         <h3 class="text-xl font-semibold mb-2">
+                             <a href="{{ project.get_absolute_url }}"
+                                aria-label="View details for project: {{ project.title }}"
+                                class="text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition duration-300 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded">
+                                 {{ project.title }}
+                             </a>
+                         </h3>
+
+                         {# REMOVED: Redundant display of all project topics on a topic-specific page #}
+                         {# <div class="mb-2 flex flex-wrap gap-1"> ... </div> #}
+
+                         {# Project Description #}
+                         <p class="text-gray-700 dark:text-gray-300 mb-4 flex-grow">{{ project.description|striptags|truncatewords:35 }}</p> {# Use striptags if description might contain HTML but shouldn't be rendered #}
+
+                         {# External Links (Code, Demo, Paper) #}
+                         <div class="flex justify-between items-center mb-4 text-sm font-medium">
+                            {% if project.github_url %}
+                                <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" aria-label="View code for {{ project.title }} on GitHub" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-1 focus:ring-blue-500 rounded">View Code</a>
+                            {% else %}<span>&nbsp;</span>{% endif %} {# Placeholder for alignment #}
+
+                            {% if project.demo_url %}
+                                <a href="{{ project.demo_url }}" target="_blank" rel="noopener noreferrer" aria-label="View live demo for {{ project.title }}" class="text-green-600 dark:text-green-400 hover:underline focus:outline-none focus:ring-1 focus:ring-green-500 rounded">Live Demo</a>
+                            {% elif project.paper_url %}
+                                 <a href="{{ project.paper_url }}" target="_blank" rel="noopener noreferrer" aria-label="Read paper for {{ project.title }}" class="text-purple-600 dark:text-purple-400 hover:underline focus:outline-none focus:ring-1 focus:ring-purple-500 rounded">Read Paper</a>
+                            {% else %}<span>&nbsp;</span>{% endif %} {# Placeholder for alignment #}
+                         </div>
+
+                         {# Skills List #}
+                         <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                             <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Skills:</span>
+                             {# Display first 4 skills, add ellipsis if more exist #}
+                             {% for skill in project.skills.all|slice:":4" %}
+                                 <span class="ml-1 inline-block bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ skill.name }}</span>
+                             {% empty %}
+                                 <span class="ml-2 text-sm text-gray-500 dark:text-gray-400 italic">N/A</span>
+                             {% endfor %}
+                             {% if project.skills.count > 4 %}<span class="text-xs text-gray-500 dark:text-gray-400" title="More skills available">...</span>{% endif %}
+                         </div>
+
+                         {# View Details Link #}
+                         <div class="mt-4 text-right">
+                            <a href="{{ project.get_absolute_url }}"
+                               aria-label="View details for project: {{ project.title }}"
+                               class="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 rounded">
+                                View Details &rarr;
+                            </a>
+                         </div>
+                     </div> {# End card content #}
+                </div> {# End card #}
+            {% endfor %}
+        </div> {# End grid #}
+    {% else %}
+        {# Message if no projects found for this specific topic #}
+        <div class="text-center py-10 px-6 bg-white dark:bg-gray-800 rounded-lg shadow-md max-w-lg mx-auto">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /> {# Folder open icon #}
+             </svg>
+            <p class="text-xl font-medium text-gray-700 dark:text-gray-200">No Projects Found</p>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">There are currently no projects listed under the topic "{{ topic.name }}".</p>
+        </div>
+    {% endif %}
+
+    {# Back Link #}
+    <div class="text-center mt-16">
+        {# SUGGESTION: Consider linking back to topic list if that's the primary navigation flow #}
+        {# <a href="{% url 'topics:topic_list' %}" class="...">...</a> #}
+        <a href="{% url 'portfolio:all_projects' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to All Projects</a>
+    </div>
+</div>
+{% endblock %}

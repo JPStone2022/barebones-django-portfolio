@@ -1,0 +1,131 @@
+{# topics/templates/topics/topic_list.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %} {# Load static if needed #}
+{# Load humanize if needed for filters like intcomma, naturaltime, etc. #}
+{% load humanize %}
+
+{% block title %}{{ page_title|default:"Project Topics" }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Browse projects by topic category." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"topics, categories, portfolio, projects, machine learning, data science" }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-12"> {# Consistent padding #}
+
+    {# Heading with optional gradient #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+        {{ page_title|default:"Project Topics" }}
+    </h1>
+
+    {# Check if there are topics on the CURRENT page object passed from the view #}
+    {% if topics %}
+        <div class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {# Loop through each topic object ON THE CURRENT PAGE #}
+            {# Assumes the view passes the page object as 'topics' in the context #}
+            {% for topic in topics %}
+                <a href="{{ topic.get_absolute_url }}" {# Assumes Topic model has get_absolute_url method #}
+                   aria-label="View projects related to topic: {{ topic.name }}"
+                   class="block bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-indigo-900/20 hover:shadow-xl dark:hover:bg-gray-700 transform hover:-translate-y-1 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-900">
+                    {# Topic Name #}
+                    <h2 class="text-xl font-semibold text-indigo-700 dark:text-indigo-300 mb-2 truncate" title="{{ topic.name }}">{{ topic.name }}</h2>
+                    {# Optional: Topic Description #}
+                    {% if topic.description %}
+                        {# Use |safe only if description HTML is trusted; otherwise remove it #}
+                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ topic.description|safe|truncatewords:15 }}</p>
+                    {% else %}
+                         <p class="text-sm text-gray-500 dark:text-gray-400 italic">No description available.</p>
+                    {% endif %}
+                     {# Optional: Display project count if available in the topic object (requires view annotation) #}
+                     {# {% if topic.project_count is not None %} #} {# Check if count exists #}
+                     {# <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">({{ topic.project_count }} project{{ topic.project_count|pluralize }})</p> #}
+                     {# {% endif %} #}
+                </a>
+            {% endfor %}
+        </div>
+
+        {# --- PAGINATION CONTROLS --- #}
+        {# Display only if there is more than one page #}
+        {% if topics.has_other_pages %}
+        <nav aria-label="Topic list pagination" class="mt-12 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 px-4 sm:px-0 max-w-4xl mx-auto">
+            {# Previous Button #}
+            <div class="-mt-px w-0 flex-1 flex">
+                {% if topics.has_previous %}
+                    {# Link to the previous page #}
+                    <a href="?page={{ topics.previous_page_number }}" class="inline-flex items-center pt-4 pr-1 border-t-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:border-gray-600">
+                        <svg class="mr-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Previous
+                    </a>
+                {% else %}
+                     {# Disabled Previous Button #}
+                     <span class="inline-flex items-center pt-4 pr-1 border-t-2 border-transparent text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed">
+                         <svg class="mr-3 h-5 w-5 text-gray-300 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Previous
+                     </span>
+                {% endif %}
+            </div>
+
+            {# Page Numbers (Only shown on medium screens and up) #}
+            <div class="hidden md:-mt-px md:flex">
+                {% for i in topics.paginator.page_range %}
+                    {% if topics.number == i %}
+                        {# Current page indicator #}
+                        <span aria-current="page" class="inline-flex items-center px-4 pt-4 border-t-2 border-indigo-500 text-sm font-medium text-indigo-600 dark:text-indigo-400">
+                            {{ i }}
+                        </span>
+                    {% elif i > topics.number|add:'-3' and i < topics.number|add:'3' %}
+                         {# Link to nearby pages #}
+                         <a href="?page={{ i }}" class="inline-flex items-center px-4 pt-4 border-t-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:border-gray-600">
+                           {{ i }}
+                         </a>
+                    {% elif i == topics.number|add:'-3' or i == topics.number|add:'3' %}
+                         {# Ellipsis for gaps in page numbers #}
+                         <span class="inline-flex items-center px-4 pt-4 border-t-2 border-transparent text-sm font-medium text-gray-500 dark:text-gray-400">...</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {# Next Button #}
+            <div class="-mt-px w-0 flex-1 flex justify-end">
+                {% if topics.has_next %}
+                    {# Link to the next page #}
+                    <a href="?page={{ topics.next_page_number }}" class="inline-flex items-center pt-4 pl-1 border-t-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:border-gray-600">
+                        Next
+                        <svg class="ml-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                {% else %}
+                    {# Disabled Next Button #}
+                    <span class="inline-flex items-center pt-4 pl-1 border-t-2 border-transparent text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed">
+                        Next
+                         <svg class="ml-3 h-5 w-5 text-gray-300 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                {% endif %}
+            </div>
+        </nav>
+        {% endif %}
+        {# --- END PAGINATION CONTROLS --- #}
+
+    {% else %}
+        {# Message shown if no topics are available AT ALL #}
+        <div class="text-center py-16 px-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7A1.994 1.994 0 0112 21h-5a2 2 0 01-2-2V5a2 2 0 012-2zm0 0h5.586a1 1 0 01.707.293l7 7a1 1 0 010 1.414l-7 7A.996.996 0 0112.586 21H7" /> {# Tag icon #}
+             </svg>
+            <p class="text-xl font-medium text-gray-700 dark:text-gray-200">No Topics Available</p>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">Project topics haven't been added yet.</p>
+        </div>
+    {% endif %}
+
+    {# Back to Home link #}
+    <div class="text-center mt-16">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+
+</div>
+{% endblock %}

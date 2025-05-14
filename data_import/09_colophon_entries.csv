@@ -1,0 +1,25 @@
+name,category,description,url,icon_class,order
+Python,backend,"The primary programming language used for the backend logic, including Django framework and data processing scripts.","https://www.python.org/","fab fa-python",0
+Django,backend,"High-level Python web framework used for the entire site structure, ORM, request handling, and admin interface.","https://www.djangoproject.com/","fas fa-feather-alt",1
+HTML5,frontend,"Standard markup language for creating the web pages and structuring content.","https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5","",0
+Tailwind CSS,frontend,"A utility-first CSS framework for rapidly building custom user interfaces. Used for all styling on this site.","https://tailwindcss.com/","",1
+JavaScript,frontend,"Used for client-side interactivity, such as the theme toggle and potentially for future dynamic features like form validation or interactive demos.","https://developer.mozilla.org/en-US/docs/Web/JavaScript","",2
+SQLite,database,"Default development database. Lightweight, file-based, and easy to set up for local development.","https://www.sqlite.org/","",0
+PostgreSQL,database,"Robust open-source relational database, often preferred for production deployments due to its features and scalability. (Planned for production)","https://www.postgresql.org/","",1
+Docker,devops,"Containerization platform to package the application and its dependencies, ensuring consistent environments from development to production.","https://www.docker.com/","fab fa-docker",0
+Git,devops,"Version control system for tracking code changes, branching, merging, and collaboration. Essential for any software project.","https://git-scm.com/","fab fa-git-alt",1
+GitHub,devops,"Platform for hosting Git repositories, managing the project's codebase, and collaborating on issues and features.","https://github.com/","fab fa-github",2
+Visual Studio Code,devops,"Primary code editor used for development, offering features like debugging, Git integration, and extensions.","https://code.visualstudio.com/","",3
+Render,deployment,"Platform-as-a-Service (PaaS) used for deploying and hosting the live version of this portfolio website.","https://render.com/","",0
+Whitenoise,deployment,"Python library used for serving static files (CSS, JavaScript, images) efficiently in production with Django, especially on PaaS.","http://whitenoise.evans.io/","",1
+Google Fonts,design,"Service used for importing the 'Inter' font family, which is used for typography across the site.","https://fonts.google.com/","",0
+Heroicons,design,"A set of free, MIT-licensed SVG icons. Used for some of the icons throughout the site (often via Tailwind UI examples or directly).","https://heroicons.com/","",1
+Prism.js,frontend,"A lightweight, extensible syntax highlighter, used for displaying code snippets attractively on project or blog pages.","https://prismjs.com/","",3
+CSV Data Import Scripts,backend,"Custom Django management commands were written to populate initial database content from CSV files for projects, skills, topics, etc.","","",4
+Django Data Migrations,backend,"Django's migration system used for schema changes and one-off data setup tasks like creating the initial superuser.","","",5
+"100 Days of Code: The Complete Python Pro Bootcamp (Udemy)",learning,"A comprehensive Python course by Dr. Angela Yu that solidified foundational and advanced Python skills, including web development with Flask.","https://www.udemy.com/course/100-days-of-code/","",0
+Codecademy Data Science & Web Dev Paths,learning,"Various career paths completed on Codecademy, covering Data Analytics, Machine Learning, NLP, Data Engineering, and Full-Stack Web Development.","https://www.codecademy.com/","",1
+Django Documentation,learning,"The official Django documentation is an invaluable and frequently consulted resource for all aspects of Django development.","https://docs.djangoproject.com/en/stable/","",2
+Tailwind CSS Documentation,learning,"Official Tailwind CSS documentation used extensively for understanding and applying utility classes for styling.","https://tailwindcss.com/docs","",3
+MDN Web Docs,learning,"Mozilla Developer Network provides comprehensive documentation for web technologies like HTML, CSS, and JavaScript.","https://developer.mozilla.org/","",4
+Stack Overflow,learning,"A go-to community for asking and finding answers to programming questions across all technologies used.","https://stackoverflow.com/","",5

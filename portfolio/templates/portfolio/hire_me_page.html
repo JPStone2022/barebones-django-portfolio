@@ -1,0 +1,110 @@
+{# portfolio/templates/portfolio/hire_me_page.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load markdownify %} {# Ensure markdownify is loaded #}
+
+{% block title %}
+    Work With {% if user_profile and user_profile.full_name %}{{ user_profile.full_name }}{% else %}Me{% endif %}
+    {% if user_profile and user_profile.tagline %} - {{ user_profile.tagline }}{% endif %}
+{% endblock title %}
+
+{% block meta_description %}
+    {% if user_profile and user_profile.hire_me_intro_markdown %}
+        {{ user_profile.hire_me_intro_markdown|markdownify|striptags|truncatewords:25 }}
+    {% elif user_profile and user_profile.full_name %}
+        Hire {{ user_profile.full_name }}, an experienced Web Developer with skills in Data Science, Python, Machine Learning. Available for new opportunities.
+    {% else %}
+        Available for new opportunities in Web Development, Data Science, Python, and Machine Learning.
+    {% endif %}
+{% endblock meta_description %}
+
+{% block meta_keywords %}
+    hire me, work with me, web developer, data scientist, python developer, freelance, contract
+    {% if user_profile and user_profile.full_name %}, {{ user_profile.full_name|lower }}{% endif %}
+    {% if user_profile and user_profile.location %}, {{ user_profile.location|lower }}{% endif %}
+{% endblock meta_keywords %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-12">
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-teal-500 to-cyan-500 dark:from-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">
+        Work With Me
+    </h1>
+
+    <div class="max-w-3xl mx-auto bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg dark:shadow-cyan-900/20 transition-colors duration-300 ease-in-out">
+
+        {# Introduction - From UserProfile model #}
+        {% if user_profile and user_profile.hire_me_intro_markdown %}
+        <div class="prose prose-indigo dark:prose-invert lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-5 mb-8 pb-8 border-b border-gray-200 dark:border-gray-700">
+            {{ user_profile.hire_me_intro_markdown|markdownify }}
+        </div>
+        {% endif %}
+
+        {# What You're Looking For Section - From UserProfile model #}
+        {% if user_profile and user_profile.hire_me_seeking_markdown %}
+        <section id="looking-for" aria-labelledby="looking-for-heading" class="mb-8">
+            <h2 id="looking-for-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">What I'm Seeking:</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                {{ user_profile.hire_me_seeking_markdown|markdownify }}
+            </div>
+        </section>
+        {% endif %}
+
+        {# Key Strengths/Services Section - From UserProfile model #}
+        {% if user_profile and user_profile.hire_me_strengths_markdown %}
+        <section id="strengths" aria-labelledby="strengths-heading" class="mb-8">
+            <h2 id="strengths-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">My Key Strengths:</h2>
+             <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                {{ user_profile.hire_me_strengths_markdown|markdownify }}
+             </div>
+        </section>
+        {% endif %}
+
+         {# Availability Section - From UserProfile model #}
+         {% if user_profile and user_profile.hire_me_availability_markdown %}
+         <section id="availability" aria-labelledby="availability-heading" class="mb-8">
+             <h2 id="availability-heading" class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Current Availability:</h2>
+             <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                 {{ user_profile.hire_me_availability_markdown|markdownify }}
+             </div>
+         </section>
+         {% endif %}
+
+        {# Call to Action - Remains mostly the same, but can also be enhanced if needed #}
+        <div class="mt-10 text-center border-t border-gray-200 dark:border-gray-700 pt-8">
+            <p class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Interested in working together?</p>
+            <a href="{% url 'portfolio:contact' %}"
+               aria-label="Contact {{ user_profile.full_name|default:'me' }} via contact form"
+               class="inline-block bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-semibold py-3 px-8 rounded-lg shadow hover:shadow-md transform hover:scale-[1.02] transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                Get In Touch via Contact Form
+            </a>
+            <div class="mt-6 space-y-2 text-sm">
+                {% if user_profile.email %}
+                <p>
+                    <a href="mailto:{{ user_profile.email }}"
+                       aria-label="Email {{ user_profile.full_name|default:'me' }} directly"
+                       class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-1 focus:ring-blue-500 rounded">
+                        Or email me directly at {{ user_profile.email }}
+                    </a>
+                </p>
+                {% endif %}
+                {% if user_profile.cv_url %} {# Or link to your cv_page if you have one #}
+                <p>
+                    <a href="{{ user_profile.cv_url }}"
+                       aria-label="View {{ user_profile.full_name|default:'my' }} CV"
+                       target="_blank" rel="noopener"
+                       class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-1 focus:ring-blue-500 rounded">
+                        View my CV for more details.
+                    </a>
+                </p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+     <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

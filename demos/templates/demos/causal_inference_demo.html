@@ -1,0 +1,112 @@
+{# demos/templates/demos/causal_inference_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %} {# Load humanize for number formatting if needed #}
+
+{% block title %}{{ page_title|default:"Causal Inference Demo" }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Interactive demonstration of estimating Average Treatment Effect (ATE) using Regression Adjustment to handle confounding variables." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"causal inference, ATE, Average Treatment Effect, regression adjustment, confounding, data science demo, statsmodels" }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-red-500 to-orange-500 dark:from-red-400 dark:to-orange-400 bg-clip-text text-transparent">
+        {{ page_title|default:"Causal Inference: Regression Adjustment" }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        This demo illustrates a common challenge in data analysis: estimating the true causal effect of an intervention (like a promotion) when other factors (confounders) influence both the intervention and the outcome. We'll use <strong>Regression Adjustment</strong> to estimate the Average Treatment Effect (ATE).
+    </p>
+
+    {# Display Error Messages - Added aria-live #}
+    {% if error_message %}
+        <div class="max-w-2xl mx-auto mb-6 p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200" role="alert" aria-live="assertive">
+            <strong class="font-semibold">Error:</strong> {{ error_message }}
+        </div>
+    {% endif %}
+
+    {# Results Section #}
+    {% if results %}
+    <div class="max-w-4xl mx-auto space-y-8">
+
+        {# Scenario Explanation #}
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-orange-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">Scenario: Marketing Promotion Impact</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>We simulated data for <strong>{{ results.n_customers|intcomma }}</strong> customers. Some received a promotion (`received_promo=1`), others didn't (`received_promo=0`). Our goal is to estimate the true causal effect of this promotion on subsequent customer `spending`.</p>
+                <p><strong>The Challenge (Confounding):</strong> In our simulated data, customers with higher prior `engagement` scores were intentionally made more likely to receive the promotion. Engagement *also* directly influences spending (more engaged customers tend to spend more regardless of the promotion). This makes `engagement` a <strong>confounder</strong> because it affects both the treatment assignment (getting the promo) and the outcome (spending).</p>
+                <p class="bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 dark:border-yellow-400 p-3 rounded text-yellow-800 dark:text-yellow-200 text-sm">
+                    <strong class="font-semibold">Why Naive Comparison Fails:</strong> Simply comparing the average spending of the promoted group vs. the non-promoted group will yield a biased estimate. The groups are not comparable *before* the promotion because the promoted group already had higher average engagement.
+                </p>
+            </div>
+        </div>
+
+        {# Naive vs. Adjusted Results #}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-red-50 dark:bg-red-900/30 p-6 rounded-lg border border-red-200 dark:border-red-800">
+                 <h3 class="text-xl font-semibold text-red-800 dark:text-red-300 mb-2">1. Naive Difference</h3>
+                 <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">Avg. Spending (Promo Group) - Avg. Spending (No Promo Group)</p>
+                 <p class="text-3xl font-bold text-red-600 dark:text-red-400">${{ results.naive_difference|floatformat:2 }}</p>
+                 <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">(Biased estimate due to confounding by 'engagement')</p>
+            </div>
+             <div class="bg-green-50 dark:bg-green-900/30 p-6 rounded-lg border border-green-200 dark:border-green-800">
+                 <h3 class="text-xl font-semibold text-green-800 dark:text-green-300 mb-2">2. Adjusted Estimate (ATE)</h3>
+                 <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">Estimated effect after controlling for 'engagement' via regression</p>
+                 <p class="text-3xl font-bold text-green-600 dark:text-green-400">${{ results.ate_estimate|floatformat:2 }}</p>
+                  {# Enhanced explanation of True ATE #}
+                  <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                      (Closer to the true effect of <strong>${{ results.true_ate|floatformat:2 }}</strong> defined in our data simulation)
+                  </p>
+            </div>
+        </div>
+
+        {# Explanation of Method #}
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-orange-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">Method: Regression Adjustment</h2>
+             <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>To account for the confounding effect of `engagement`, we used Ordinary Least Squares (OLS) regression. We modeled the outcome (`spending`) based on both the treatment variable (`received_promo`) and the confounding variable (`engagement`).</p>
+                {# Consider using |safe only if you absolutely trust the source and need HTML rendering #}
+                <p>The regression model fitted was: <code>{{ results.regression_formula }}</code></p>
+                <p>
+                    By including the confounder (`engagement`) in the model, the coefficient for `received_promo` provides an estimate of the promotion's effect *while holding engagement constant*. This helps isolate the promotion's impact from the pre-existing differences between the groups.
+                </p>
+                <p>We then used this fitted model to estimate the Average Treatment Effect (ATE) via these steps (simplified):</p>
+                <ol>
+                    <li>Predict the potential spending for <em>all</em> customers under the scenario where they <em>had</em> received the promo (setting `received_promo=1` for everyone in the model).</li>
+                    <li>Predict the potential spending for <em>all</em> customers under the scenario where they <em>had not</em> received the promo (setting `received_promo=0` for everyone).</li>
+                    <li>Calculate the difference between these two predicted potential outcomes for each customer.</li>
+                    <li>The ATE is the average of these individual differences across all customers.</li>
+                </ol>
+                <p class="text-xs italic text-gray-500 dark:text-gray-400">
+                    Note: This method assumes a linear relationship between the confounder and the outcome, and that we've measured and included all significant confounders (often strong assumptions in real-world data).
+                </p>
+                <details class="bg-gray-50 dark:bg-gray-700 p-2 rounded mt-2">
+                    <summary class="cursor-pointer text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">View Full OLS Regression Summary</summary>
+                    <div class="mt-2 text-xs overflow-x-auto">
+                        {{ results.ols_summary|safe }} {# Render HTML summary table #}
+                    </div>
+                </details>
+             </div>
+        </div>
+
+        {# Optional Plot Display #}
+        {% if results.plot_url %}
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-orange-900/20 transition-colors duration-300 ease-in-out">
+             <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">Data Visualization</h2>
+             <img src="{{ results.plot_url }}" alt="Scatter plot of Spending vs Engagement, colored by Promotion Status" class="max-w-full h-auto mx-auto rounded border border-gray-200 dark:border-gray-700 shadow">
+             <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
+                 This plot shows customer spending against their engagement score. Notice how promoted customers (blue dots) tend to cluster towards higher engagement levels *and* higher spending, visually demonstrating the confounding effect that the naive comparison fails to account for.
+             </p>
+        </div>
+        {% endif %}
+
+    </div>
+    {% elif not error_message %}
+        {# Fallback message if results aren't generated but no error either #}
+        <p class="text-center text-gray-600 dark:text-gray-400">Analysis results are not available. There might have been an issue generating the data or running the analysis.</p>
+    {% endif %} {# End results block #}
+
+     <div class="text-center mt-16">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}
