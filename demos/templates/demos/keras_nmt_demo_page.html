@@ -1,0 +1,508 @@
+{# machine_translation_demos/templates/machine_translation_demos/keras_nmt_demo_page.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base.html is in portfolio app #}
+{% load static %}
+
+{% block title %}{{ page_title|default:"Runnable Demo: Neural Machine Translation with Keras" }} - Portfolio{% endblock %}
+
+{% block meta_description %}{{ meta_description|default:"A step-by-step guide to building and running a simple English-to-German Neural Machine Translation model using Keras/TensorFlow." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Neural Machine Translation, NMT, Seq2Seq, LSTM, Keras, TensorFlow, Python, Demo, Portfolio" }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12"> {# Consistent padding like data_wrangling_demo #}
+    <header class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
+            {{ page_title_main|default:"Runnable Demo: Neural Machine Translation" }}
+        </h1>
+        <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            A step-by-step guide to building and running a simple English-to-German translator using Keras.
+        </p>
+    </header>
+
+    <article class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg dark:shadow-gray-900/20 transition-colors duration-300 ease-in-out">
+
+        {# Custom styles for this specific demo page - can be moved to a separate CSS file if preferred #}
+        <style>
+            .demo-section-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; margin-top: 2rem; color: #00796b; /* Dark Teal */ border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; }
+            .dark .demo-section-title { color: #4db6ac; /* Lighter Teal for dark mode */ border-bottom-color: #4a5568; }
+            .demo-subsection-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; margin-top: 1.5rem; color: #009688; /* Teal */ }
+            .dark .demo-subsection-title { color: #80cbc4; }
+            .demo-prose p, .demo-prose ul { margin-bottom: 1rem; color: #4a5568; }
+            .dark .demo-prose p, .dark .demo-prose ul { color: #cbd5e0; }
+            .demo-prose ul { list-style-position: inside; padding-left: 1rem; }
+            .demo-prose li { margin-bottom: 0.5rem; }
+            .demo-code-block { background-color: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.875rem; margin-top: 0.5rem; margin-bottom: 1rem; }
+            .demo-code-block code { white-space: pre; }
+            .demo-output-block { background-color: #f8fafc; border: 1px solid #e2e8f0; color: #334155; padding: 1rem; border-radius: 0.5rem; margin-top: 0.5rem; margin-bottom: 1rem; font-family: 'Courier New', Courier, monospace; font-size: 0.875rem; }
+            .dark .demo-output-block { background-color: #1e293b; border-color: #334155; color: #e2e8f0; }
+            .demo-output-block code { white-space: pre-wrap; }
+            .demo-info-box { background-color: #e0f2f1; border-left: 4px solid #26a69a; padding: 1rem; margin-bottom: 1rem; border-radius: 0.25rem; color: #004d40; }
+            .dark .demo-info-box { background-color: #263238; border-left-color: #4db6ac; color: #b2dfdb; }
+            .demo-file-content-box { background-color: #e0f7fa; border: 1px dashed #b2ebf2; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; color: #006064;}
+            .dark .demo-file-content-box { background-color: #1a202c; border-color: #4fd1c5; color: #b2f5ea; }
+        </style>
+
+        <section id="demo-intro" class="demo-prose mb-8">
+            <h2 class="demo-section-title">Introduction</h2>
+            <p>This demo provides a hands-on walkthrough of creating a basic Neural Machine Translation (NMT) model. We'll use a small dataset of English-to-German sentence pairs to train a Sequence-to-Sequence (Seq2Seq) model with LSTMs in Keras/TensorFlow. You'll see how to preprocess the data, define and train the model, and then use it for translation.</p>
+            <div class="demo-info-box">
+                <p><strong>Goal:</strong> To provide a simplified, runnable example that illustrates the core concepts of NMT.</p>
+                <p><strong>Note:</strong> Due to the small dataset and limited training epochs, the translation quality will be basic. This demo focuses on the process, not on achieving state-of-the-art translation.</p>
+            </div>
+        </section>
+
+        <section id="demo-setup" class="demo-prose mb-8">
+            <h2 class="demo-section-title">Setup</h2>
+            <h3 class="demo-subsection-title">1. Create Sample Data File</h3>
+            <p>Create a file named <code>eng-ger.txt</code> in the same directory where you will save the Python scripts. Copy the following content into it:</p>
+            <div class="demo-file-content-box">
+                <pre><code>Go.	Geh.
+Hi.	Hallo.
+Run!	Lauf!
+Wow!	Wow!
+Fire!	Feuer!
+Help!	Hilfe!
+Stop!	Stopp!
+Wait.	Warte.
+Hello.	Hallo.
+I try.	Ich probiere es.
+I won.	Ich habe gewonnen.
+Smile.	Lächle.
+Cheers!	Prost!
+Got it?	Verstanden?
+He ran.	Er rannte.
+Hop in.	Mach mit!
+I see.	Ich verstehe.
+Awesome!	Fantastisch!
+Come on.	Komm mit.
+Get out.	Raus hier!</code></pre>
+            </div>
+
+            <h3 class="demo-subsection-title">2. Install Libraries</h3>
+            <p>Ensure you have Python installed, along with NumPy and TensorFlow. You can install them using pip:</p>
+            <div class="demo-code-block"><code>pip install numpy tensorflow</code></div>
+        </section>
+
+        <section id="demo-preprocessing" class="demo-prose mb-8">
+            <h2 class="demo-section-title">Step 1: Data Preprocessing</h2>
+            <p>This script (<code>preprocessing_demo.py</code>) will read <code>eng-ger.txt</code>, tokenize the sentences, build vocabularies, and prepare the data in a numerical format for the model. It will also save the necessary preprocessing objects for later use.</p>
+            <h3 class="demo-subsection-title"><code>preprocessing_demo.py</code></h3>
+            <div class="demo-code-block"><code class="language-python">
+# preprocessing_demo.py
+import numpy as np
+import re
+import pickle
+
+# --- Configuration ---
+data_path = "eng-ger.txt" # Path to your sample data file
+num_samples = 20  # Number of samples to use (all for this small demo)
+preprocessing_objects_file = 'nmt_preprocessing_objects.pkl'
+
+# --- Initialization ---
+input_docs = []
+target_docs = []
+input_tokens = set()
+target_tokens = set()
+
+print(f"--- Starting Preprocessing using '{data_path}' ---")
+
+# --- Reading and Processing Lines ---
+try:
+    with open(data_path, 'r', encoding='utf-8') as f:
+        lines = f.read().split('\\n') # Corrected split character
+except FileNotFoundError:
+    print(f"Error: Data file '{data_path}' not found. Please create it first.")
+    exit()
+
+for line in lines[:num_samples]:
+    if not line.strip(): # Skip empty or whitespace-only lines
+        continue
+    parts = line.split('\\t') # Corrected split character
+    if len(parts) < 2:
+        print(f"Skipping malformed line: {line}")
+        continue
+        
+    input_doc, target_doc_raw = parts[0], parts[1]
+    input_docs.append(input_doc)
+
+    target_doc = " ".join(re.findall(r"[\\w']+|[^\\s\\w]", target_doc_raw))
+    target_doc = '&lt;START&gt; ' + target_doc + ' &lt;END&gt;' # Use HTML entities for < >
+    target_docs.append(target_doc)
+
+    for token in re.findall(r"[\\w']+|[^\\s\\w]", input_doc):
+        if token not in input_tokens:
+            input_tokens.add(token)
+            
+    for token in target_doc.split():
+        if token not in target_tokens:
+            target_tokens.add(token)
+
+if not input_docs or not target_docs:
+    print("Error: No data was processed. Check the data file and num_samples.")
+    exit()
+
+print(f"Processed {len(input_docs)} sentence pairs.")
+
+input_tokens_sorted = sorted(list(input_tokens))
+target_tokens_sorted = sorted(list(target_tokens))
+
+num_encoder_tokens = len(input_tokens_sorted)
+num_decoder_tokens = len(target_tokens_sorted)
+
+max_encoder_seq_length = max([len(re.findall(r"[\\w']+|[^\\s\\w]", doc)) for doc in input_docs]) if input_docs else 0
+max_decoder_seq_length = max([len(doc.split()) for doc in target_docs]) if target_docs else 0
+
+input_features_dict = {token: i for i, token in enumerate(input_tokens_sorted)}
+target_features_dict = {token: i for i, token in enumerate(target_tokens_sorted)}
+reverse_input_features_dict = {i: token for token, i in input_features_dict.items()}
+reverse_target_features_dict = {i: token for token, i in target_features_dict.items()}
+
+print(f"Number of unique source tokens: {num_encoder_tokens}")
+print(f"Number of unique target tokens: {num_decoder_tokens}")
+print(f"Max source sequence length: {max_encoder_seq_length}")
+print(f"Max target sequence length: {max_decoder_seq_length}")
+
+encoder_input_data = np.zeros((len(input_docs), max_encoder_seq_length, num_encoder_tokens), dtype='float32')
+decoder_input_data = np.zeros((len(input_docs), max_decoder_seq_length, num_decoder_tokens), dtype='float32')
+decoder_target_data = np.zeros((len(input_docs), max_decoder_seq_length, num_decoder_tokens), dtype='float32')
+
+for i, (input_doc_text, target_doc_text) in enumerate(zip(input_docs, target_docs)):
+    for t, token in enumerate(re.findall(r"[\\w']+|[^\\s\\w]", input_doc_text)):
+        if token in input_features_dict:
+            encoder_input_data[i, t, input_features_dict[token]] = 1.
+    
+    for t, token in enumerate(target_doc_text.split()):
+        if token in target_features_dict:
+            decoder_input_data[i, t, target_features_dict[token]] = 1.
+            if t > 0: 
+                decoder_target_data[i, t - 1, target_features_dict[token]] = 1.
+
+print(f"Shape of encoder_input_data: {encoder_input_data.shape}")
+print(f"Shape of decoder_input_data: {decoder_input_data.shape}")
+print(f"Shape of decoder_target_data: {decoder_target_data.shape}")
+
+preprocessing_data_to_save = {
+    'input_features_dict': input_features_dict,
+    'target_features_dict': target_features_dict,
+    'reverse_input_features_dict': reverse_input_features_dict,
+    'reverse_target_features_dict': reverse_target_features_dict,
+    'max_encoder_seq_length': max_encoder_seq_length,
+    'max_decoder_seq_length': max_decoder_seq_length,
+    'num_encoder_tokens': num_encoder_tokens,
+    'num_decoder_tokens': num_decoder_tokens,
+    'input_docs': input_docs,
+    'encoder_input_data': encoder_input_data,
+    'decoder_input_data': decoder_input_data, # Added for training script
+    'decoder_target_data': decoder_target_data # Added for training script
+}
+
+with open(preprocessing_objects_file, 'wb') as f:
+    pickle.dump(preprocessing_data_to_save, f)
+print(f"Preprocessing objects saved to '{preprocessing_objects_file}'")
+print("--- Preprocessing Complete ---")
+            </code></div>
+            <p><strong>To Run:</strong> Save the code above as <code>preprocessing_demo.py</code> and run it from your terminal: <code>python preprocessing_demo.py</code></p>
+            <h3 class="demo-subsection-title">Expected Output (example):</h3>
+            <div class="demo-output-block"><code>--- Starting Preprocessing using 'eng-ger.txt' ---
+Processed 20 sentence pairs.
+Number of unique source tokens: 26
+Number of unique target tokens: 30
+Max source sequence length: 3
+Max target sequence length: 6
+Shape of encoder_input_data: (20, 3, 26)
+Shape of decoder_input_data: (20, 6, 30)
+Shape of decoder_target_data: (20, 6, 30)
+Preprocessing objects saved to 'nmt_preprocessing_objects.pkl'
+--- Preprocessing Complete ---</code></div>
+        </section>
+
+        <section id="demo-training" class="demo-prose mb-8">
+            <h2 class="demo-section-title">Step 2: Model Training</h2>
+            <p>This script (<code>training_model_demo.py</code>) defines the Seq2Seq model architecture, loads the preprocessed data (including the one-hot encoded arrays), trains the model for a few epochs, and saves the trained model.</p>
+            <h3 class="demo-subsection-title"><code>training_model_demo.py</code></h3>
+            <div class="demo-code-block"><code class="language-python">
+# training_model_demo.py
+import numpy as np
+import pickle
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' 
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+
+import tensorflow as tf
+from tensorflow import keras
+from keras import layers, models, Input
+
+# --- Configuration ---
+preprocessing_objects_file = 'nmt_preprocessing_objects.pkl'
+model_save_path = 'nmt_demo_model.keras'
+
+# --- Model Hyperparameters ---
+latent_dim = 128
+batch_size = 10 
+epochs = 15 # Reduced for quick demo
+
+print("--- Starting Model Training ---")
+
+# --- Load Preprocessed Data ---
+try:
+    with open(preprocessing_objects_file, 'rb') as f:
+        loaded_data = pickle.load(f)
+except FileNotFoundError:
+    print(f"Error: Preprocessing objects file '{preprocessing_objects_file}' not found. Run preprocessing_demo.py first.")
+    exit()
+
+num_encoder_tokens = loaded_data['num_encoder_tokens']
+num_decoder_tokens = loaded_data['num_decoder_tokens']
+encoder_input_data = loaded_data['encoder_input_data']
+decoder_input_data = loaded_data['decoder_input_data']
+decoder_target_data = loaded_data['decoder_target_data']
+
+if encoder_input_data is None or decoder_input_data is None or decoder_target_data is None:
+    print("Error: Required data arrays (encoder_input_data, decoder_input_data, decoder_target_data) not found in pickle. Ensure preprocessing_demo.py saves them.")
+    exit()
+    
+print(f"Loaded training data shapes: Encoder In: {encoder_input_data.shape}, Decoder In: {decoder_input_data.shape}, Decoder Target: {decoder_target_data.shape}")
+
+# --- Encoder Definition ---
+encoder_inputs = Input(shape=(None, num_encoder_tokens), name='encoder_input_layer')
+encoder_lstm = layers.LSTM(latent_dim, return_state=True, name='encoder_lstm')
+encoder_outputs, state_h_enc, state_c_enc = encoder_lstm(encoder_inputs)
+encoder_states = [state_h_enc, state_c_enc]
+
+# --- Decoder Definition ---
+decoder_inputs = Input(shape=(None, num_decoder_tokens), name='decoder_input_layer')
+decoder_lstm = layers.LSTM(latent_dim, return_sequences=True, return_state=True, name='decoder_lstm')
+decoder_outputs_lstm, _, _ = decoder_lstm(decoder_inputs, initial_state=encoder_states) # Renamed variable to avoid clash
+decoder_dense = layers.Dense(num_decoder_tokens, activation='softmax', name='decoder_dense')
+decoder_outputs = decoder_dense(decoder_outputs_lstm) # Use the output from LSTM
+
+# --- Build the Training Model ---
+training_model = models.Model([encoder_inputs, decoder_inputs], decoder_outputs)
+
+training_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
+
+print("\\nTraining Model Summary:")
+training_model.summary(line_length=120)
+
+print("\\nStarting model training...")
+history = training_model.fit(
+    [encoder_input_data, decoder_input_data], 
+    decoder_target_data,
+    batch_size=batch_size,
+    epochs=epochs,
+    validation_split=0.2,
+    verbose=1
+)
+print("Model training complete.")
+
+training_model.save(model_save_path)
+print(f"Trained model saved to '{model_save_path}'")
+print("--- Model Training Complete ---")
+            </code></div>
+            <p><strong>To Run:</strong> Save as <code>training_model_demo.py</code> and run: <code>python training_model_demo.py</code></p>
+            <h3 class="demo-subsection-title">Expected Output (example, accuracy will vary):</h3>
+            <div class="demo-output-block"><code>--- Starting Model Training ---
+Loaded training data shapes: Encoder In: (20, 3, 26), Decoder In: (20, 6, 30), Decoder Target: (20, 6, 30)
+
+Training Model Summary:
+Model: "model"
+________________________________________________________________________________________________________________________
+ Layer (type)                           Output Shape                  Param #   Connected to                                   
+========================================================================================================================
+ encoder_input_layer (InputLayer)       [(None, None, 26)]            0         []                                             
+                                                                                                                               
+ decoder_input_layer (InputLayer)       [(None, None, 30)]            0         []                                             
+                                                                                                                               
+ encoder_lstm (LSTM)                    [(None, 128), (None, 128),    84480     ['encoder_input_layer[0][0]']                  
+                                        (None, 128)]                                                                           
+                                                                                                                               
+ decoder_lstm (LSTM)                    [(None, None, 128), (None,    132608    ['decoder_input_layer[0][0]',                  
+                                        128), (None, 128)]                       'encoder_lstm[0][1]',                         
+                                                                                 'encoder_lstm[0][2]']                         
+                                                                                                                               
+ decoder_dense (Dense)                  (None, None, 30)              3870      ['decoder_lstm[0][0]']                         
+                                                                                                                               
+========================================================================================================================
+Total params: 220958 (863.12 KB)
+Trainable params: 220958 (863.12 KB)
+Non-trainable params: 0 (0.00 Byte)
+________________________________________________________________________________________________________________________
+
+Starting model training...
+Epoch 1/15
+2/2 [==============================] - 3s 487ms/step - loss: 3.3810 - accuracy: 0.0937 - val_loss: 3.3290 - val_accuracy: 0.1250
+...
+Epoch 15/15
+2/2 [==============================] - 0s 40ms/step - loss: 1.3085 - accuracy: 0.8125 - val_loss: 3.7807 - val_accuracy: 0.1875
+Model training complete.
+Trained model saved to 'nmt_demo_model.keras'
+--- Model Training Complete ---</code></div>
+        </section>
+
+        <section id="demo-inference" class="demo-prose mb-8">
+            <h2 class="demo-section-title">Step 3: Inference (Translation)</h2>
+            <p>This script (<code>inference_demo.py</code>) loads the trained model and the preprocessing objects, then defines the inference setup (separate encoder and decoder models) to translate a few sample sentences.</p>
+            <h3 class="demo-subsection-title"><code>inference_demo.py</code></h3>
+            <div class="demo-code-block"><code class="language-python">
+# inference_demo.py
+import numpy as np
+import pickle
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+
+import tensorflow as tf
+from tensorflow import keras
+from keras import models, layers, Input
+
+# --- Configuration ---
+preprocessing_objects_file = 'nmt_preprocessing_objects.pkl'
+trained_model_path = 'nmt_demo_model.keras'
+
+print("--- Starting Inference/Translation Demo ---")
+
+# --- Load Preprocessing Objects ---
+try:
+    with open(preprocessing_objects_file, 'rb') as f:
+        loaded_data = pickle.load(f)
+except FileNotFoundError:
+    print(f"Error: Preprocessing objects file '{preprocessing_objects_file}' not found. Run preprocessing_demo.py first.")
+    exit()
+
+target_features_dict = loaded_data['target_features_dict']
+reverse_target_features_dict = loaded_data['reverse_target_features_dict']
+max_decoder_seq_length = loaded_data['max_decoder_seq_length']
+num_decoder_tokens = loaded_data['num_decoder_tokens']
+encoder_input_data_samples = loaded_data['encoder_input_data']
+input_docs_samples = loaded_data['input_docs']
+
+# --- Load Trained Model ---
+try:
+    training_model_loaded = models.load_model(trained_model_path)
+    print(f"Trained model '{trained_model_path}' loaded successfully.")
+except Exception as e:
+    print(f"Error loading trained model '{trained_model_path}': {e}. Run training_model_demo.py first.")
+    exit()
+
+# --- Define Inference Models ---
+encoder_inputs_inf = training_model_loaded.get_layer('encoder_input_layer').input
+_, state_h_enc_inf, state_c_enc_inf = training_model_loaded.get_layer('encoder_lstm').output
+encoder_states_inf = [state_h_enc_inf, state_c_enc_inf]
+encoder_model_inf = models.Model(encoder_inputs_inf, encoder_states_inf)
+print("Encoder model for inference created.")
+
+latent_dim_loaded = training_model_loaded.get_layer('decoder_lstm').units
+decoder_inputs_inf_placeholder = Input(shape=(1, num_decoder_tokens), name='decoder_input_placeholder_inf') # Shape for single token
+decoder_state_input_h = Input(shape=(latent_dim_loaded,), name='decoder_state_h_input_inf')
+decoder_state_input_c = Input(shape=(latent_dim_loaded,), name='decoder_state_c_input_inf')
+decoder_states_inputs_inf = [decoder_state_input_h, decoder_state_input_c]
+
+decoder_lstm_layer_inf = training_model_loaded.get_layer('decoder_lstm')
+decoder_outputs_inf_lstm, state_h_dec_inf, state_c_dec_inf = decoder_lstm_layer_inf(
+    decoder_inputs_inf_placeholder, initial_state=decoder_states_inputs_inf
+) # Renamed variable
+decoder_states_inf = [state_h_dec_inf, state_c_dec_inf]
+
+decoder_dense_layer_inf = training_model_loaded.get_layer('decoder_dense')
+decoder_outputs_inf = decoder_dense_layer_inf(decoder_outputs_inf_lstm) # Use output from LSTM
+
+decoder_model_inf = models.Model(
+    [decoder_inputs_inf_placeholder] + decoder_states_inputs_inf,
+    [decoder_outputs_inf] + decoder_states_inf
+)
+print("Decoder model for inference created.")
+
+# --- Decode Sequence Function ---
+def decode_sequence(test_input_seq):
+    states_value = encoder_model_inf.predict(test_input_seq, verbose=0)
+    
+    target_seq = np.zeros((1, 1, num_decoder_tokens)) # Batch size 1, 1 time step
+    target_seq[0, 0, target_features_dict['&lt;START&gt;']] = 1. # Use HTML entity
+    
+    decoded_sentence_tokens = []
+    
+    for _ in range(max_decoder_seq_length):
+        output_tokens, h, c = decoder_model_inf.predict([target_seq] + states_value, verbose=0)
+        
+        sampled_token_index = np.argmax(output_tokens[0, -1, :])
+        sampled_token = reverse_target_features_dict.get(sampled_token_index, '&lt;UNK&gt;') # Use HTML entity
+        
+        if sampled_token == '&lt;END&gt;': # Use HTML entity
+            break
+        
+        decoded_sentence_tokens.append(sampled_token)
+        
+        target_seq = np.zeros((1, 1, num_decoder_tokens))
+        target_seq[0, 0, sampled_token_index] = 1.
+        states_value = [h, c]
+        
+    return " ".join(decoded_sentence_tokens)
+
+# --- Translate Some Samples ---
+num_test_samples = min(5, len(input_docs_samples))
+print(f"\\n--- Translating {num_test_samples} sample sentences ---")
+for i in range(num_test_samples):
+    test_input = encoder_input_data_samples[i:i+1]
+    original_sentence = input_docs_samples[i]
+    decoded_translation = decode_sequence(test_input)
+    
+    print(f"Input:    '{original_sentence}'")
+    print(f"Translated: '{decoded_translation}'")
+    print("-" * 30)
+
+print("--- Inference Demo Complete ---")
+            </code></div>
+            <p><strong>To Run:</strong> Save as <code>inference_demo.py</code> and run: <code>python inference_demo.py</code></p>
+            <h3 class="demo-subsection-title">Expected Output (example translations will be very basic):</h3>
+            <div class="demo-output-block"><code>--- Starting Inference/Translation Demo ---
+Trained model 'nmt_demo_model.keras' loaded successfully.
+Encoder model for inference created.
+Decoder model for inference created.
+
+--- Translating 5 sample sentences ---
+Input:    'Go.'
+Translated: 'Geh .'
+------------------------------
+Input:    'Hi.'
+Translated: 'Hallo .'
+------------------------------
+Input:    'Run!'
+Translated: 'Lauf !'
+------------------------------
+Input:    'Wow!'
+Translated: 'Wow !'
+------------------------------
+Input:    'Fire!'
+Translated: 'Feuer !'
+------------------------------
+--- Inference Demo Complete ---</code></div>
+        </section>
+
+        <section id="demo-conclusion" class="demo-prose">
+            <h2 class="demo-section-title">Conclusion</h2>
+            <p>This demo provided a simplified, runnable pipeline for Neural Machine Translation. You've seen how to:</p>
+            <ul>
+                <li>Prepare sample data.</li>
+                <li>Preprocess text into a numerical format suitable for Keras.</li>
+                <li>Define and train a Seq2Seq LSTM model.</li>
+                <li>Set up encoder and decoder models for inference.</li>
+                <li>Translate new sentences.</li>
+            </ul>
+            <div class="demo-info-box">
+                <p><strong>Limitations & Next Steps:</strong></p>
+                <p>The translation quality is very basic due to the tiny dataset and minimal training. For real-world applications, you would need:</p>
+                <ul>
+                    <li>Much larger datasets (millions of sentence pairs).</li>
+                    <li>More sophisticated tokenization (e.g., BPE, SentencePiece).</li>
+                    <li>Longer training times and potentially larger models (more layers, higher dimensionality).</li>
+                    <li>Advanced techniques like Attention mechanisms, Bidirectional LSTMs, and Beam Search decoding.</li>
+                    <li>Proper evaluation using metrics like BLEU score.</li>
+                </ul>
+                <p>This demo serves as a starting point for understanding the mechanics of NMT.</p>
+            </div>
+        </section>
+         <div class="text-center mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
+             <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+        </div>
+    </article>
+</div>
+{% endblock %}

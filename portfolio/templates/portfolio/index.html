@@ -1,0 +1,465 @@
+{# portfolio/templates/portfolio/index.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{# SUGGESTION: Load humanize if you plan to use filters like intcomma, naturaltime, etc.
+   The template currently doesn't use any filters that require it in the visible sections. #}
+{% load humanize %}
+{% load markdownify %}
+
+{% block title %}
+    {# Uses page_title from view, then adds user's name #}
+    {% if page_title %}
+        {{ page_title }}
+        {% if user_profile and user_profile.full_name %}
+            | {{ user_profile.full_name }}
+        {% endif %}
+    {% elif user_profile and user_profile.full_name %}
+        {# Fallback if page_title is not provided, specific to homepage #}
+        {{ user_profile.full_name }}'s Portfolio
+    {% else %}
+        {# Generic fallback if nothing else is available #}
+        Machine Learning, Data Science and AI Development Portfolio
+    {% endif %}
+{% endblock title %}
+
+{% block meta_description %}
+    {# Combines user's name with the meta_description from the view, or uses a default #}
+    {% if user_profile and user_profile.full_name %}
+        Portfolio of {{ user_profile.full_name }}{% if meta_description %}: {{ meta_description|lower }}{% else %}, showcasing projects and skills in Deep Learning, AI Research, Data Science, Computer Vision, and NLP.{% endif %}
+    {% elif meta_description %}
+        {{ meta_description }}
+    {% else %}
+        Portfolio showcasing projects and skills in Deep Learning, AI Research, Data Science, Computer Vision, and NLP.
+    {% endif %}
+{% endblock meta_description %}
+
+{% block content %}
+    {# Hero Header Section #}
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20 md:py-32">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">{{ user_profile.full_name }}</h1>
+            <p class="text-xl md:text-2xl mb-8">{{ user_profile.tagline|default:"Passionate Developer & Innovator" }}</p>
+            {# Button linking to projects page #}
+            <a href="{% url 'portfolio:all_projects' %}"
+               class="inline-block bg-white text-blue-600 font-semibold py-3 px-6 rounded-lg shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-700 focus:ring-white transition duration-300">
+               View My Work
+            </a>
+        </div>
+    </header>
+
+    {# Enhanced About Section #}
+    <section id="about" class="py-16 bg-white dark:bg-gray-900 transition-colors duration-300 ease-in-out">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-10 bg-gradient-to-r from-gray-700 to-gray-900 dark:from-gray-300 dark:to-gray-100 bg-clip-text text-transparent">About Me</h2>
+            <div class="max-w-3xl mx-auto text-center flex flex-col items-center text-lg text-gray-700 dark:text-gray-300 space-y-4">
+                 
+                 <p class="text-xl font-medium">Hi, I'm {{ user_profile.full_name|default:"[Your Name]" }}! {{ user_profile.about_me_introduction|default:"Brief Introduction (update the database to change this)" }}
+                </p>
+                <p>
+                    {{ user_profile.about_me_details|default:"Longer Description" }}
+                </p>
+                <div class="mt-6">
+                    <a href="{% url 'portfolio:about_me' %}"
+                       class="text-blue-600 dark:text-blue-400 hover:underline font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">
+                        Learn More About Me &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    {# End Enhanced About Section #}
+
+    {# Skills Section with Explanations - Now Dynamic Titles #}
+    <section id="skills" class="py-16 bg-gray-50 dark:bg-gray-800 transition-colors duration-300 ease-in-out">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-gray-700 to-gray-900 dark:from-gray-300 dark:to-gray-100 bg-clip-text text-transparent">Technical Skills Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                 {# Skill Card 1: Deep Learning - Dynamic Content & Title #}
+                 <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition duration-300 ease-in-out">
+                    {# --- MODIFIED: Use dynamic title --- #}
+                    <h3 class="text-xl font-semibold mb-4 text-indigo-700 dark:text-indigo-400">
+                        {{ user_profile.skills_overview_ml_title|default:"Machine Learning" }}
+                    </h3>
+                    <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
+                        {% if user_profile.skills_overview_ml_markdown %}
+                            {{ user_profile.skills_overview_ml_markdown | markdownify | safe }}
+                        {% else %}
+                            <p class="italic text-gray-500 dark:text-gray-400">Skills details coming soon.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                 {# Skill Card 2: Python & Data Science - Dynamic Content & Title #}
+                <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition duration-300 ease-in-out">
+                    {# --- MODIFIED: Use dynamic title --- #}
+                    <h3 class="text-xl font-semibold mb-4 text-indigo-700 dark:text-indigo-400">
+                        {{ user_profile.skills_overview_datasci_title|default:"Data Science" }}
+                    </h3>
+                     <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
+                        {% if user_profile.skills_overview_datasci_markdown %}
+                            {{ user_profile.skills_overview_datasci_markdown | markdownify | safe }}
+                        {% else %}
+                            <p class="italic text-gray-500 dark:text-gray-400">Skills details coming soon.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                 {# Skill Card 3: General IT & Other Skills - Dynamic Content & Title #}
+                <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition duration-300 ease-in-out">
+                    {# --- MODIFIED: Use dynamic title --- #}
+                    <h3 class="text-xl font-semibold mb-4 text-indigo-700 dark:text-indigo-400">
+                        {{ user_profile.skills_overview_general_title|default:"General IT" }}
+                    </h3>
+                    <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
+                        {% if user_profile.skills_overview_general_markdown %}
+                            {{ user_profile.skills_overview_general_markdown | markdownify | safe }}
+                        {% else %}
+                            <p class="italic text-gray-500 dark:text-gray-400">Skills details coming soon.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if featured_skills %}
+            <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+                 <h3 class="text-xl font-semibold text-center mb-6 text-gray-700 dark:text-gray-200">Featured Skills</h3>
+                 <div class="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
+                     {% for skill in featured_skills %}
+                         <a href="{{ skill.get_absolute_url }}"
+                            aria-label="View details for skill: {{ skill.name }}"
+                            class="inline-block bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-medium px-3 py-1 rounded-full shadow-sm hover:shadow-md transform hover:-translate-y-0.5 transition duration-200 ease-in-out text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+                             {{ skill.name }}
+                         </a>
+                     {% endfor %}
+                 </div>
+            </div>
+            {% endif %}
+
+            <div class="text-center mt-10">
+                 <a href="{% url 'skills:skill_list' %}"
+                    class="text-blue-600 dark:text-blue-400 hover:underline font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 rounded">
+                    View Detailed Skills &rarr;
+                 </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- {# Skills Section with Explanations - Now Dynamic #}
+        <section id="skills" class="py-16 bg-gray-50 dark:bg-gray-800 transition-colors duration-300 ease-in-out">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-gray-700 to-gray-900 dark:from-gray-300 dark:to-gray-100 bg-clip-text text-transparent">Technical Skills Overview</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                     {# Skill Card 1: Deep Learning - Dynamic Content #}
+                     <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition duration-300 ease-in-out">
+                        <h3 class="text-xl font-semibold mb-4 text-indigo-700 dark:text-indigo-400">Deep Learning & Machine Learning Libraries</h3>
+                        {# Use database field with markdown filter #}
+                        <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
+                            {% if user_profile.skills_overview_ml_markdown %}
+                                {{ user_profile.skills_overview_ml_markdown | markdownify | safe }}
+                            {% else %}
+                                <p class="italic text-gray-500 dark:text-gray-400">Skills details coming soon.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                     {# Skill Card 2: Python & Data Science - Dynamic Content #}
+                    <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition duration-300 ease-in-out">
+                        <h3 class="text-xl font-semibold mb-4 text-indigo-700 dark:text-indigo-400">Python & Data Science</h3>
+                         {# Use database field with markdown filter #}
+                         <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
+                            {% if user_profile.skills_overview_datasci_markdown %}
+                                {{ user_profile.skills_overview_datasci_markdown | markdownify | safe }}
+                            {% else %}
+                                <p class="italic text-gray-500 dark:text-gray-400">Skills details coming soon.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                     {# Skill Card 3: General IT & Other Skills - Dynamic Content #}
+                    <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition duration-300 ease-in-out">
+                        <h3 class="text-xl font-semibold mb-4 text-indigo-700 dark:text-indigo-400">General IT & Other Skills</h3>
+                        {# Use database field with markdown filter #}
+                        <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
+                            {% if user_profile.skills_overview_general_markdown %}
+                                {{ user_profile.skills_overview_general_markdown | markdownify | safe }}
+                            {% else %}
+                                <p class="italic text-gray-500 dark:text-gray-400">Skills details coming soon.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Featured Skills section remains the same, assuming it pulls from a different source (e.g., Skills app) #}
+                {% if featured_skills %}
+                <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+                     <h3 class="text-xl font-semibold text-center mb-6 text-gray-700 dark:text-gray-200">Featured Skills</h3>
+                     <div class="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
+                         {% for skill in featured_skills %}
+                             <a href="{{ skill.get_absolute_url }}"
+                                aria-label="View details for skill: {{ skill.name }}"
+                                class="inline-block bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-medium px-3 py-1 rounded-full shadow-sm hover:shadow-md transform hover:-translate-y-0.5 transition duration-200 ease-in-out text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+                                 {{ skill.name }}
+                             </a>
+                         {% endfor %}
+                     </div>
+                </div>
+                {% endif %}
+
+                <div class="text-center mt-10">
+                     <a href="{% url 'skills:skill_list' %}"
+                        class="text-blue-600 dark:text-blue-400 hover:underline font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 rounded">
+                        View Detailed Skills &rarr;
+                     </a>
+                </div>
+            </div>
+        </section> -->
+    {# Featured Topics Section #}
+    {% if featured_topics %}
+    <section id="featured-topics" class="py-16 bg-white dark:bg-gray-900 transition-colors duration-300 ease-in-out">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-gray-700 to-gray-900 dark:from-gray-300 dark:to-gray-100 bg-clip-text text-transparent">Key Topic Areas</h2>
+            <div class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
+                {% for topic in featured_topics %}
+                    <a href="{{ topic.get_absolute_url }}"
+                       aria-label="View projects related to topic: {{ topic.name }}"
+                       class="inline-block bg-indigo-100 dark:bg-indigo-900 hover:bg-indigo-200 dark:hover:bg-indigo-800 text-indigo-800 dark:text-indigo-200 font-semibold px-4 py-2 rounded-full shadow-sm hover:shadow-md transform hover:-translate-y-0.5 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-900">
+                        {{ topic.name }}
+                    </a>
+                {% endfor %}
+            </div>
+             <div class="text-center mt-10">
+                 <a href="{% url 'portfolio:all_projects' %}" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">
+                    Browse Projects by Topic &rarr;
+                 </a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {# Featured Certificates Section #}
+    {% if featured_certificates %}
+    {# Note: Background color alternates based on previous section's presence #}
+    <section id="featured-certificates" class="py-16 {% if featured_topics %}bg-gray-50 dark:bg-gray-800{% else %}bg-white dark:bg-gray-900{% endif %} transition-colors duration-300 ease-in-out">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-gray-700 to-gray-900 dark:from-gray-300 dark:to-gray-100 bg-clip-text text-transparent">Featured Certificates</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                {% for cert in featured_certificates %}
+                    <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md flex flex-col items-center text-center transform hover:scale-[1.03] transition duration-300 ease-in-out hover:shadow-lg dark:hover:shadow-indigo-900/30">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1">{{ cert.title }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Issued by: <span class="font-medium text-gray-700 dark:text-gray-300">{{ cert.issuer }}</span></p>
+                        {% if cert.date_issued %}
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">{{ cert.date_issued|date:"F Y" }}</p>
+                        {% endif %}
+                        {% if cert.certificate_file %}
+                            <a href="{{ cert.certificate_file.url }}"
+                               target="_blank" rel="noopener noreferrer"
+                               aria-label="View certificate: {{ cert.title }}"
+                               class="mt-auto text-blue-600 dark:text-blue-400 hover:underline font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-700 rounded">
+                                View Certificate &rarr;
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-10">
+                 <a href="{% url 'portfolio:certificates' %}"
+                    class="text-blue-600 dark:text-blue-400 hover:underline font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 rounded">
+                    View All Certificates &rarr;
+                 </a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {# Featured Projects Section #}
+    {% if featured_projects %}
+    {# Note: Background color alternates based on previous sections' presence #}
+    <section id="projects" class="py-16 {% if featured_certificates or featured_topics %}bg-white dark:bg-gray-900{% else %}bg-gray-50 dark:bg-gray-800{% endif %} transition-colors duration-300 ease-in-out">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-gray-700 to-gray-900 dark:from-gray-300 dark:to-gray-100 bg-clip-text text-transparent">Featured Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {% for project in featured_projects %}
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg dark:shadow-indigo-900/20 overflow-hidden project-card transition-transform duration-300 ease-in-out hover:scale-[1.02] flex flex-col"> {# Added hover effect #}
+                        <a href="{% url 'portfolio:project_detail' slug=project.slug %}" aria-label="View details for project: {{ project.title }}">
+                            <img src="{{ project.image_url|default:'https://placehold.co/600x400/CCCCCC/FFFFFF?text=Project+Image' }}"
+                                 alt="{{ project.title }} Visual"
+                                 class="w-full h-24 object-cover hover:opacity-90 transition-opacity duration-300"
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/600x400/E0E0E0/BDBDBD?text=Image+Not+Found';">
+                        </a>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold mb-2">
+                                <a href="{% url 'portfolio:project_detail' slug=project.slug %}"
+                                   aria-label="View details for project: {{ project.title }}"
+                                   class="text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition duration-300 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded">
+                                    {{ project.title }}
+                                </a>
+                            </h3>
+                            <p class="text-gray-700 dark:text-gray-300 mb-4 flex-grow">{{ project.description|truncatewords:30 }}</p> {# Use flex-grow to push links down #}
+                            {# Links section #}
+                            <div class="flex justify-between items-center mb-4 text-sm font-medium">
+                                {% if project.github_url %}
+                                    <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" aria-label="View code for {{ project.title }} on GitHub" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-1 focus:ring-blue-500 rounded">View Code</a>
+                                {% else %}<span>&nbsp;</span>{% endif %} {# Placeholder for alignment #}
+
+                                {% if project.demo_url %}
+                                    <a href="{{ project.demo_url }}" target="_blank" rel="noopener noreferrer" aria-label="View live demo for {{ project.title }}" class="text-green-600 dark:text-green-400 hover:underline focus:outline-none focus:ring-1 focus:ring-green-500 rounded">Live Demo</a>
+                                {% elif project.paper_url %}
+                                     <a href="{{ project.paper_url }}" target="_blank" rel="noopener noreferrer" aria-label="Read paper for {{ project.title }}" class="text-purple-600 dark:text-purple-400 hover:underline focus:outline-none focus:ring-1 focus:ring-purple-500 rounded">Read Paper</a>
+                                {% else %}<span>&nbsp;</span>{% endif %} {# Placeholder for alignment #}
+                            </div>
+                            {# Skills section - sticks to bottom because of flex-grow on description #}
+                            <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-600">
+                                <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Skills:</span>
+                                {% for skill in project.skills.all|slice:":5" %} {# Show max 5 skills #}
+                                    <span class="ml-1 inline-block bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ skill.name }}</span>
+                                {% empty %}<span class="ml-2 text-sm text-gray-500 dark:text-gray-400 italic">N/A</span>{% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-10">
+                 <a href="{% url 'portfolio:all_projects' %}"
+                    class="text-blue-600 dark:text-blue-400 hover:underline font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 rounded">
+                    View All Projects &rarr;
+                 </a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {# Featured Demos Section #}
+    {% if featured_demos %}
+    {# Note: Background color alternates based on previous sections' presence #}
+    <section id="featured-demos" class="py-16 {% if featured_projects or featured_certificates or featured_topics %}bg-gray-50 dark:bg-gray-800{% else %}bg-white dark:bg-gray-900{% endif %} transition-colors duration-300 ease-in-out">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-pink-500 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent">Interactive Demos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {% for demo in featured_demos %}
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg dark:shadow-purple-900/20 overflow-hidden project-card transition-transform duration-300 ease-in-out hover:scale-[1.02] flex flex-col"> {# Re-use project-card style #}
+                        <a href="{{ demo.get_absolute_url }}"
+                           aria-label="Try demo: {{ demo.title }}"
+                           class="block hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-purple-500 rounded-t-lg">
+                            <img src="{{ demo.image_url|default:'https://placehold.co/600x400/a855f7/FFFFFF?text=Demo+Preview' }}"
+                                 alt="{{ demo.title }} Preview"
+                                 class="w-full h-24 object-cover"
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/600x400/E0E0E0/BDBDBD?text=Image+Not+Found';">
+                        </a>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold mb-2">
+                                <a href="{{ demo.get_absolute_url }}"
+                                   aria-label="Try demo: {{ demo.title }}"
+                                   class="text-gray-800 dark:text-gray-100 hover:text-purple-600 dark:hover:text-purple-400 transition duration-300 focus:outline-none focus:ring-1 focus:ring-purple-500 rounded">
+                                    {{ demo.title }}
+                                </a>
+                            </h3>
+                            <p class="text-gray-700 dark:text-gray-300 mb-4 flex-grow">{{ demo.description|truncatewords:30 }}</p>
+                            <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-600 text-right">
+                                <a href="{{ demo.get_absolute_url }}"
+                                   aria-label="Try demo: {{ demo.title }}"
+                                   class="inline-flex items-center text-sm text-purple-600 dark:text-purple-400 hover:underline font-medium focus:outline-none focus:ring-1 focus:ring-purple-500 rounded px-1 py-0.5">
+                                    Try Demo
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+             <div class="text-center mt-10">
+                <a href="{% url 'demos:all_demos_list' %}"
+                   class="text-blue-600 dark:text-blue-400 hover:underline font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 rounded">
+                   View All Demos &rarr;
+                </a>
+           </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {# Featured Recommendations Section #}
+    {% if featured_recommendations %}
+    {# Note: Background color alternates based on previous sections' presence #}
+    <section id="recommendations" class="py-16 {% if featured_demos or featured_projects or featured_certificates or featured_topics %}bg-white dark:bg-gray-900{% else %}bg-gray-50 dark:bg-gray-800{% endif %} transition-colors duration-300 ease-in-out">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-teal-500 to-cyan-600 dark:from-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">Recommendations</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                {% for item in featured_recommendations %}
+                    <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md dark:shadow-cyan-900/20 flex flex-col items-center text-center transform hover:scale-[1.03] transition duration-300 ease-in-out hover:shadow-lg">
+                        {% if item.image_url %}
+                        <img src="{{ item.image_url }}" alt="{{ item.name }} Image" class="h-24 w-auto object-contain mb-3 rounded" loading="lazy" onerror="this.onerror=null; this.src='https://placehold.co/150x96/E0E0E0/BDBDBD?text=Image';">
+                        {% else %}
+                         <div class="h-24 w-24 flex items-center justify-center bg-gray-100 dark:bg-gray-600 rounded mb-3 text-gray-400 dark:text-gray-500">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                               <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                             </svg>
+                         </div>
+                        {% endif %}
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1">{{ item.name }}</h3>
+                        {% if item.category %}<p class="text-xs text-cyan-600 dark:text-cyan-400 font-medium mb-2">{{ item.category }}</p>{% endif %}
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-3 flex-grow">{{ item.description|truncatewords:20 }}</p>
+                        <a href="{{ item.get_absolute_url }}" rel="noopener nofollow"
+                           aria-label="View product recommendation: {{ item.name }}"
+                           class="mt-auto text-blue-600 dark:text-blue-400 hover:underline font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-700 rounded">
+                           View Product &rarr;
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-10">
+                 <a href="{% url 'recommendations:recommendation_list' %}" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 rounded">
+                    View All Recommendations &rarr;
+                 </a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {# Contact Section #}
+    <section id="contact" class="py-16 bg-gray-800 dark:bg-gray-900 text-gray-200 dark:text-gray-300 transition-colors duration-300 ease-in-out">
+       <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-8 text-white">Get In Touch</h2>
+            <p class="text-lg mb-8 max-w-2xl mx-auto">
+                I'm always open to discussing new projects, creative ideas, or opportunities.
+                Please use the contact form to reach out!
+            </p>
+            <a href="{% url 'portfolio:contact' %}"
+               class="inline-block bg-white text-indigo-600 font-semibold py-3 px-8 rounded-lg shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white transition duration-300 mb-8">
+                Go to Contact Form
+            </a>
+            {# Social Links with Icons #}
+            <div class="flex justify-center items-center space-x-6 text-lg">
+                {# LinkedIn #}
+                <a href="{{ user_profile.linkedin_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ user_profile.full_name }} on LinkedIn" class="flex items-center hover:text-blue-400 transition duration-300 focus:outline-none focus:ring-1 focus:ring-blue-400 rounded p-1">
+                    <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    LinkedIn
+                </a>
+                <span class="text-gray-500">|</span>
+                {# GitHub #}
+                <a href="{{ user_profile.github_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ user_profile.full_name }} on GitHub" class="flex items-center hover:text-blue-400 transition duration-300 focus:outline-none focus:ring-1 focus:ring-blue-400 rounded p-1">
+                    <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.5.49.09.665-.217.665-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.446-1.134-1.089-1.437-1.089-1.437-.89-.608.067-.595.067-.595.985.07 1.505.992 1.505.992.875 1.508 2.292 1.072 2.85.819.089-.636.341-1.072.619-1.319-2.174-.247-4.456-1.089-4.456-4.843 0-1.071.383-1.947 1.01-2.632-.101-.248-.438-1.247.096-2.59 0 0 .823-.263 2.696.992a9.403 9.403 0 012.45-.33c.83.009 1.66.11 2.45.33 1.873-1.255 2.696-.992 2.696-.992.535 1.343.2 2.342.096 2.59.629.685 1.01 1.561 1.01 2.632 0 3.763-2.286 4.594-4.464 4.835.35.308.662.923.662 1.857 0 1.339-.012 2.418-.012 2.747 0 .268.174.578.67.48C19.137 20.195 22 16.44 22 12.017 22 6.484 17.523 2 12 2z" clip-rule="evenodd"/></svg>
+                    GitHub
+                </a>
+                <span class="text-gray-500">|</span>
+                 {# CV Link #}
+                <a href="{% url 'portfolio:cv' %}" target="_blank" rel="noopener noreferrer" aria-label="View {{ user_profile.full_name }}'s CV" class="flex items-center hover:text-blue-400 transition duration-300 focus:outline-none focus:ring-1 focus:ring-blue-400 rounded p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    CV
+                </a>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    {{ block.super }} {# Includes scripts from base.html's extra_scripts block #}
+    {# Add any page-specific JavaScript here if needed #}
+{% endblock %}

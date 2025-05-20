@@ -1,0 +1,108 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% load markdownify %}
+
+{% block title %}
+    {{ demo_page.page_meta_title|default:demo_page.title|default:"Demo Page" }} - Portfolio
+{% endblock %}
+
+{% block meta_description %}
+    {% if demo_page.meta_description %}
+        {{ demo_page.meta_description|markdownify|striptags|truncatewords:25 }}
+    {% else %}
+        Explore this demo.
+    {% endif %}
+{% endblock %}
+
+{% block meta_keywords %}
+    {{ demo_page.meta_keywords|default:"demo, project, details" }}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <header class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+            {{ demo_page.page_meta_title|default:demo_page.title }}
+        </h1>
+        {% if demo_page.meta_description %}
+            <div class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto prose dark:prose-invert">
+                {{ demo_page.meta_description | markdownify }}
+            </div>
+        {% endif %}
+    </header>
+
+    <article class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg dark:shadow-purple-900/20">
+        {% if error_message %}
+            <div class="mb-6 p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200" role="alert">
+                <strong>Error:</strong> {{ error_message }}
+            </div>
+        {% endif %}
+
+        {% comment %}
+        Assuming 'demo_page' is your Demo model instance,
+        and it has a related manager 'sections' for DemoSection instances.
+        Each section object should have 'section_title', 'section_content_markdown',
+        'code_snippet', 'code_language', and 'code_snippet_explanation' (if it's Markdown).
+        The view (demos/views.py - generic_demo_view) should pass 'demo_page'.
+        The main description for the demo page itself is in 'demo_page.description'.
+        {% endcomment %}
+
+        {% with sections_list=demo_page.sections.all|dictsort:"section_order" %}
+            {% comment %} Corrected condition to use demo_page.description {% endcomment %}
+            {% if not sections_list and not demo_page.description and not error_message %}
+                <div class="mb-6 p-4 rounded-lg bg-yellow-100 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-200" role="alert">
+                    No content sections found for this demo.
+                </div>
+            {% endif %}
+
+            {% comment %} Render description of the Demo object if it exists {% endcomment %}
+            {% if demo_page.description %} {# Corrected to demo_page.description #}
+                <section class="mb-8 pb-6 prose dark:prose-invert lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
+                    {{ demo_page.description | markdownify }} {# Corrected to demo_page.description #}
+                </section>
+            {% endif %}
+
+
+            {% for section in sections_list %}
+                <section class="mb-8 pb-6 {% if not forloop.last %}border-b border-gray-200 dark:border-gray-700{% endif %}">
+                    {% if section.section_title %}
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                            {{ section.section_title }}
+                        </h2>
+                    {% endif %}
+
+                    {% comment %} Render section_content_markdown using markdownify {% endcomment %}
+                    {% if section.section_content_markdown %}
+                        <div class="prose dark:prose-invert lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
+                            {{ section.section_content_markdown|markdownify }}
+                        </div>
+                    {% endif %}
+
+                    {% if section.code_snippet %}
+                        <div class="mt-6">
+                            {% if section.code_snippet_title %}
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                                    {{ section.code_snippet_title }}
+                                </h3>
+                            {% endif %}
+                            <div class="bg-gray-900 dark:bg-gray-800 text-gray-100 dark:text-gray-200 p-4 rounded-md shadow-md overflow-x-auto">
+                                <pre><code class="language-{{ section.code_language|default:'plaintext' }}">{{ section.code_snippet|escape }}</code></pre>
+                            </div>
+                            {% if section.code_snippet_explanation %}
+                                <div class="mt-2 text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 p-3 rounded-md prose prose-sm dark:prose-invert max-w-none">
+                                    {{ section.code_snippet_explanation|markdownify }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </section>
+            {% endfor %}
+        {% endwith %}
+        
+        <div class="text-center mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <a href="{% url 'demos:all_demos_list' %}" class="text-indigo-600 dark:text-indigo-400 hover:underline mr-4">&larr; Back to Demos</a>
+            <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline">&larr; Back to Home</a>
+        </div>
+    </article>
+</div>
+{% endblock %}

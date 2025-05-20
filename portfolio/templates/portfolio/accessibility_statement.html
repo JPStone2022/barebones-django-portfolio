@@ -1,0 +1,88 @@
+{# portfolio/templates/portfolio/accessibility_statement.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% load markdownify %}
+
+{% block title %}
+    {{ page_title|default:"Accessibility Statement" }} - Portfolio
+{% endblock title %}
+
+{% block meta_description %}
+    {% if meta_description %}
+        {{ meta_description }}
+    {% elif user_profile and user_profile.full_name %}
+        Accessibility commitment and features of {{ user_profile.full_name }}'s portfolio website, aiming for WCAG compliance.
+    {% else %}
+        Our commitment to web accessibility (WCAG standards) and the features implemented on this portfolio website.
+    {% endif %}
+{% endblock meta_description %}
+
+{% block meta_keywords %}
+    accessibility, WCAG, web accessibility standards, inclusive design, universal design, portfolio accessibility
+    {% if user_profile and user_profile.full_name %}
+        , {{ user_profile.full_name|lower }}
+    {% endif %}
+{% endblock meta_keywords %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-12">
+    <header class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-700 via-gray-800 to-black dark:from-gray-300 dark:via-gray-400 dark:to-gray-500 bg-clip-text text-transparent pb-2">
+            {{ page_title|default:"Accessibility Statement" }}
+        </h1>
+        {% if introductory_text %}
+            <p class="mt-4 text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+                {{ introductory_text|markdownify }}
+            </p>
+        {% else %}
+            <p class="mt-4 text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+                {% if user_profile and user_profile.full_name %} {{ user_profile.full_name }} is {% else %} We are {% endif %} committed to ensuring digital accessibility for people with disabilities. We are continually improving the user experience for everyone and applying the relevant accessibility standards.
+            </p>
+        {% endif %}
+    </header>
+
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 sm:p-10 rounded-xl shadow-2xl dark:shadow-gray-900/30">
+        <div class="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-6">
+
+            {% if user_profile and user_profile.accessibility_statement_markdown %}
+                {{ user_profile.accessibility_statement_markdown|markdownify }}
+            {% else %}
+                <section aria-labelledby="commitment-heading">
+                    <h2 id="commitment-heading" class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Our Commitment</h2>
+                    <p>We are dedicated to making this website accessible to the widest possible audience, regardless of technology or ability. We aim to comply with all applicable standards, including the Web Content Accessibility Guidelines (WCAG) 2.1 level AA.</p>
+                </section>
+
+                <section aria-labelledby="features-heading" class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <h2 id="features-heading" class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>Accessibility Features</h2>
+                    <p>This website incorporates several features designed to improve accessibility, including:</p>
+                    <ul>
+                        <li><strong>Semantic HTML:</strong> Use of appropriate HTML5 elements to structure content.</li>
+                        <li><strong>Keyboard Navigation:</strong> Full operability via keyboard.</li>
+                        <li><strong>ARIA Attributes:</strong> Use of ARIA (Accessible Rich Internet Applications) attributes where necessary to enhance understanding for assistive technologies.</li>
+                        <li><strong>Text Alternatives:</strong> Provision of alternative text for images and other non-text content.</li>
+                        <li><strong>Resizable Text:</strong> Text can be resized using browser controls.</li>
+                        <li><strong>Contrast:</strong> Efforts to maintain good color contrast for text and interactive elements.</li>
+                        <li><strong>Responsive Design:</strong> The site adapts to different screen sizes and orientations.</li>
+                    </ul>
+                </section>
+
+                <section aria-labelledby="feedback-heading" class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <h2 id="feedback-heading" class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>Feedback & Contact</h2>
+                    <p>We welcome your feedback on the accessibility of this website. If you encounter any accessibility barriers or have suggestions on how we can improve, please <a href="{% url 'portfolio:contact' %}" class="text-sky-600 dark:text-sky-400 hover:underline">contact us</a>.</p>
+                    <p>We aim to respond to feedback within 5 business days.</p>
+                </section>
+                
+                <section aria-labelledby="update-heading" class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                     <h2 id="update-heading" class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 00-15.357-2m15.357 2H15" /></svg>Date of Statement</h2>
+                     <p>This statement was last updated on <time datetime="{{ "now"|date:"Y-m-d" }}">{{ "now"|date:"F j, Y" }}</time>.</p>
+                </section>
+
+            {% endif %}
+        </div>
+    </div>
+
+     <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

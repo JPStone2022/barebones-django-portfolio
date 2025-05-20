@@ -1,0 +1,165 @@
+{# portfolio/templates/portfolio/contact_page.html #}
+{% extends 'portfolio/base.html' %}
+{% load markdownify %} {# ADDED markdownify load tag #}
+
+{% block title %}
+    {% if page_title %}
+        {{ page_title }}
+        {% if user_profile and user_profile.full_name %}
+            | {{ user_profile.full_name }}
+        {% endif %}
+    {% else %}
+        Contact
+        {% if user_profile and user_profile.full_name %}
+             {{ user_profile.full_name }}
+        {% else %}
+             Me
+        {% endif %}
+        - Portfolio
+    {% endif %}
+{% endblock title %}
+
+{# MODIFIED meta_description to process {{ meta_description }} if it's Markdown #}
+{% block meta_description %}
+    {% if meta_description %}
+        {{ meta_description|markdownify|striptags|truncatewords:25 }}
+        {% if user_profile and user_profile.full_name and user_profile.full_name|lower not in meta_description|lower %}
+            Contact {{ user_profile.full_name }}.
+        {% endif %}
+    {% elif user_profile and user_profile.full_name %}
+        Get in touch with {{ user_profile.full_name }}. Send a message via the contact form for inquiries or collaborations.
+    {% else %}
+        Get in touch. Send a message via the contact form for inquiries or collaborations.
+    {% endif %}
+{% endblock meta_description %}
+
+{% block meta_keywords %}
+    {% if meta_keywords %}
+        {{ meta_keywords }}
+    {% else %}
+        contact, get in touch, message, inquiries
+    {% endif %}
+    {% if user_profile and user_profile.full_name %}
+        {% if user_profile.full_name|lower not in meta_keywords|lower %}
+            , {{ user_profile.full_name|lower }}
+        {% endif %}
+    {% endif %}
+    , portfolio
+{% endblock meta_keywords %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+
+    <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-blue-900/20 transition-colors duration-300 ease-in-out">
+
+        {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                    <div class="p-4 rounded-lg
+                        {% if message.tags == 'success' %} bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200
+                        {% elif message.tags == 'error' %} bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200
+                        {% else %} bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200
+                        {% endif %}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'portfolio:contact' %}" novalidate>
+            {% csrf_token %}
+
+            <div style="display:none;">
+                 {{ form.honeypot }}
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.name.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.email.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.subject.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Subject</label>
+                    {{ form.subject }}
+                    {% if form.subject.errors %}
+                        <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.subject.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.message.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                        <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.message.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow hover:shadow-md dark:hover:shadow-blue-900/40 transform hover:scale-[1.02] transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                    Send Message
+                </button>
+            </div>
+        </form>
+    </div>
+
+     <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{{ block.super }}
+<script>
+    function applyDarkModeToForms() {
+        const isDarkMode = document.documentElement.classList.contains('dark');
+        const formElements = document.querySelectorAll('input.w-full.px-4.py-2, textarea.w-full.px-4.py-2');
+
+        formElements.forEach(el => {
+            const baseClasses = ['w-full', 'px-4', 'py-2', 'border', 'rounded-lg', 'focus:outline-none', 'focus:ring-2'];
+            const lightClasses = ['border-gray-300', 'bg-white', 'text-gray-900', 'placeholder-gray-500', 'focus:ring-blue-500'];
+            const darkClasses = ['dark:border-gray-600', 'dark:bg-gray-700', 'dark:text-gray-100', 'dark:placeholder-gray-400', 'dark:focus:ring-blue-400', 'dark:focus:border-blue-400'];
+
+            if (isDarkMode) {
+                el.classList.remove(...lightClasses);
+                el.classList.add(...darkClasses);
+            } else {
+                el.classList.remove(...darkClasses);
+                el.classList.add(...lightClasses);
+            }
+            el.classList.add(...baseClasses);
+        });
+    }
+
+    applyDarkModeToForms();
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if(themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            setTimeout(applyDarkModeToForms, 50);
+        });
+    }
+     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        if (!localStorage.getItem('color-theme')) {
+            setTimeout(applyDarkModeToForms, 50);
+        }
+     });
+</script>
+{% endblock %}

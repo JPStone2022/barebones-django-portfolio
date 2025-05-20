@@ -1,0 +1,117 @@
+{# skills/templates/skills/skill_detail.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% load markdownify %}
+{% load humanize %}
+
+{% block title %}
+    {{ skill.name }} - Skill Details - Portfolio
+{% endblock %}
+
+{% block meta_description %}
+    {% if skill.description %}
+        Learn about my experience with {{ skill.name }}: {{ skill.description|markdownify|striptags|truncatewords:20 }}
+    {% elif meta_description %}
+        {{ meta_description|markdownify|striptags|truncatewords:25 }}
+    {% else %}
+        Detailed information about the skill: {{ skill.name }}, including related projects and demos.
+    {% endif %}
+{% endblock %}
+
+{% block meta_keywords %}
+    {{ skill.name|lower }}, skill details, {{ skill.category.name|lower|default:"technical skill" }}, portfolio, projects using {{ skill.name|lower }}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-12">
+    <header class="mb-12 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-emerald-500 via-green-500 to-lime-600 dark:from-emerald-400 dark:via-green-400 dark:to-lime-500 bg-clip-text text-transparent pb-2">
+            {{ skill.name }}
+        </h1>
+        {% if skill.category %}
+            <p class="text-lg text-gray-600 dark:text-gray-400">
+                Category: <a href="{% url 'skills:skill_list' %}#category-heading-{{ skill.category.slug|default:skill.category.id }}" class="text-green-600 dark:text-lime-400 hover:underline">{{ skill.category.name }}</a>
+            </p>
+        {% endif %}
+        {% if skill.proficiency_level %}
+            <div class="mt-4">
+                <span class="inline-block bg-green-100 dark:bg-lime-800/70 text-green-700 dark:text-lime-200 text-sm font-medium px-4 py-1.5 rounded-full">
+                    Proficiency: {{ skill.get_proficiency_level_display|default:"Not specified" }}
+                </span>
+            </div>
+        {% endif %}
+    </header>
+
+    <article class="max-w-5xl mx-auto bg-white dark:bg-gray-800 p-6 md:p-10 rounded-xl shadow-2xl dark:shadow-lime-900/25 space-y-10">
+        {% if skill.description %}
+            <section id="skill-details-main" aria-labelledby="skill-details-heading">
+                <h2 id="skill-details-heading" class="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100 mb-5 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-green-500 dark:text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    About this Skill
+                </h2>
+                <div class="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {{ skill.description|markdownify }}
+                </div>
+            </section>
+        {% else %}
+             <p class="text-gray-600 dark:text-gray-400 italic text-center py-6">No detailed description has been provided for this skill yet.</p>
+        {% endif %}
+
+        {# Display Related Projects #}
+        {% if projects %}
+        <section id="related-projects" aria-labelledby="related-projects-heading" class="border-t border-gray-200 dark:border-gray-700 pt-8">
+            <h2 id="related-projects-heading" class="text-2xl md:text-3xl font-semibold mb-6 text-gray-800 dark:text-gray-100 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-green-500 dark:text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                Projects Utilizing {{ skill.name }}
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {% for project in projects %}
+                    <a href="{{ project.get_absolute_url }}" class="group block p-5 bg-gray-50 dark:bg-gray-700/60 rounded-lg shadow-md hover:shadow-xl dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800 transform hover:scale-[1.03] transition-all duration-200 ease-in-out">
+                        <h3 class="font-semibold text-lg text-green-700 dark:text-lime-400 group-hover:underline mb-1">{{ project.title }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">{{ project.description | markdownify | striptags | truncatewords:20 }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {# Display Related Demos #}
+        {% if demos %}
+        <section id="related-demos" aria-labelledby="related-demos-heading" class="border-t border-gray-200 dark:border-gray-700 pt-8">
+            <h2 id="related-demos-heading" class="text-2xl md:text-3xl font-semibold mb-6 text-gray-800 dark:text-gray-100 flex items-center">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-green-500 dark:text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                   <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                 </svg>
+                Demos Featuring {{ skill.name }}
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {% for demo in demos %}
+                    <a href="{{ demo.get_absolute_url }}" class="group block p-5 bg-gray-50 dark:bg-gray-700/60 rounded-lg shadow-md hover:shadow-xl dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800 transform hover:scale-[1.03] transition-all duration-200 ease-in-out">
+                        <h3 class="font-semibold text-lg text-green-700 dark:text-lime-400 group-hover:underline mb-1">{{ demo.title }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">{{ demo.description | markdownify | striptags | truncatewords:20 }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if not skill.description and not projects and not demos %}
+            <div class="text-center py-10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-xl text-gray-700 dark:text-gray-200">More Information Coming Soon</p>
+                <p class="text-gray-500 dark:text-gray-400 mt-2">Detailed information and related projects for this skill will be added shortly.</p>
+            </div>
+        {% endif %}
+    </article>
+
+    <div class="text-center mt-12">
+        <a href="{% url 'skills:skill_list' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded ">&larr; Back to All Skills</a>
+    </div>
+</div>
+{% endblock %}

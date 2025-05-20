@@ -1,0 +1,951 @@
+title,slug,description,image_url,results_metrics,challenges,lessons_learned,code_snippet,code_language,github_url,demo_url,paper_url,order,is_featured,long_description_markdown,skills,topics
+AB Testing Shoefly Demo,ab-testing-shoefly-demo,Learn how to perform A/B testing analysis using Python and Pandas. This example uses data from ShoeFly.com to compare ad performance.,https://placehold.co/600x400/F43F5E/FFFFFF?text=AB+Testing+Demo,"A/B testing, also known as split testing, is a randomized experimentation process wherein two or more versions of a variable (web page, page element, ad copy, etc.) are shown to different segments of website visitors at the same time to determine which version leaves the maximum impact and drives business metrics.","Understanding where views and clicks originate is crucial. Based on the analysis (overall CTR, daily CTR trends for Ad A vs. Ad B, and performance across different `utm_source` platforms), ShoeFly.com can make an informed decision.","This part of the analysis:
+1.  Compares the total number of users shown Ad A versus Ad B.
+2.  Calculates and compares the overall click-through rates for Ad A and Ad B.
+3.  Further breaks down the analysis by calculating the CTR for each ad, for each day of the week. This helps to see if performance fluctuated daily.","import pandas as pd
+
+# Load the ad clicks data
+# Assume the data is in a file named 'ad_clicks.csv'
+try:
+    ad_clicks_df = pd.read_csv('ad_clicks.csv')
+    print(""Data loaded successfully. First 5 rows:"")
+    print(ad_clicks_df.head())
+except FileNotFoundError:
+    print(""Error: 'ad_clicks.csv' not found. Please ensure the file is in the correct directory."")
+    # Create a dummy DataFrame for demonstration if file is not found
+    data = {
+        'user_id': range(1, 101),
+        'utm_source': ['google', 'facebook', 'email', 'twitter'] * 25,
+        'day': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] * 14 + ['Mon', 'Tue'],
+        'ad_click_timestamp': [pd.NaT if i % 3 == 0 else pd.Timestamp('2023-01-01 10:00:00') + pd.Timedelta(hours=i) for i in range(100)],
+        'experimental_group': ['A', 'B'] * 50
+    }
+    ad_clicks_df = pd.DataFrame(data)
+    print(""\nUsing dummy data for demonstration:"")
+    print(ad_clicks_df.head())",Python,,/demos/concepts/ab-testing-shoefly-demo/,,0,FALSE,"Details for AB Testing Shoefly Demo. This code imports Pandas and attempts to read `ad_clicks.csv`. If the file isn't found, it creates a sample DataFrame for illustrative purposes. `ad_clicks_df.head()` displays the first few rows.",pandas,Data Analysis
+AI Tools in Development,ai-tools-demo,"Exploring the benefits and pitfalls of using AI code assistants like Copilot and ChatGPT in ML/DS development, emphasizing responsible use. For experienced data scientists, ML engineers, and developers, AI tools act as powerful co-pilots and accelerators.",https://placehold.co/600x400/C026D3/FFFFFF?text=AI+Tools,"The experienced user can quickly verify the correctness, and then debug subtle issues, quickly adapt the output to specific contexts, and then integrate it effectively, leveraging their foundational knowledge.","Without a solid understanding of underlying programming concepts, algorithms, and security principles, relying heavily on AI tools can be detrimental. The inexperienced user may lack the critical evaluation skills needed to identify flaws, security risks, or inefficiencies in the AI's output, potentially leading to technical debt or outright system failure.",Don't use code you don't understand. Ask the AI to explain it or research the concepts yourself.,"# User Prompt (Experienced Dev):
+# ""Write a Python function using Pandas to load a CSV,
+# fill missing 'age' values with the column median,
+# and one-hot encode the 'category' column, returning the modified DataFrame.""
+
+# AI Output (Example):
+import pandas as pd
+
+def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
+    """"""Loads data, fills missing age with median, and OHE category.""""""
+    df_processed = df.copy() # Work on a copy
+    if 'age' in df_processed.columns and df_processed['age'].isnull().any():
+        if pd.api.types.is_numeric_dtype(df_processed['age']):
+            median_age = df_processed['age'].median()
+            df_processed['age'].fillna(median_age, inplace=True)
+        else:
+            # Handle non-numeric age column if necessary (e.g., log warning)
+            print(""Warning: 'age' column is not numeric, cannot fill with median."")
+    if 'category' in df_processed.columns:
+        # Ensure category is treated as categorical type for robustness
+        df_processed['category'] = df_processed['category'].astype('category')
+        df_processed = pd.get_dummies(df_processed, columns=['category'], prefix='cat', drop_first=True)
+    return df_processed",Python,,/demos/concepts/ai-tools-demo/,,0,FALSE,"Details for AI Tools in Development. AI tools like Large Language Models (LLMs) and code assistants (e.g., GitHub Copilot, ChatGPT, Google Gemini Code Assist) are rapidly changing development workflows. They offer significant potential for acceleration but also introduce risks, requiring careful consideration based on user experience and task complexity.",python,"Machine Learning,Deep Learning,AI Development,AI Engineering"
+Artificial Intelligence Concepts,ai-concepts-demo,"An overview of Artificial Intelligence (AI), its relationship with Machine Learning and Deep Learning, key subfields, and core concepts.",https://placehold.co/600x400/DB2777/FFFFFF?text=AI+Concepts,"Artificial Intelligence is a transformative field with the potential to revolutionize many aspects of our lives. While often associated specifically with Machine Learning and Deep Learning, AI encompasses a broader range of techniques aimed at replicating human cognitive abilities.","As AI becomes more powerful and integrated into society, considering its ethical implications is crucial",Responsible AI development requires careful consideration of these issues throughout the entire lifecycle.,"AI can be broadly categorized:
+* **Artificial Narrow Intelligence (ANI) / Weak AI**: This is the type of AI we have today. These systems are designed and trained for a specific task (e.g., image recognition, playing chess, language translation, virtual assistants like Siri or Alexa). While they can perform their specific task extremely well, sometimes exceeding human capabilities, they lack general cognitive abilities.
+* **Artificial General Intelligence (AGI) / Strong AI**: This refers to hypothetical AI with the ability to understand, learn, and apply knowledge across a wide range of tasks at a human level. AGI would possess consciousness, self-awareness, and the ability to solve complex problems it wasn't explicitly trained for. This remains largely theoretical and is a long-term research goal.
+* **Artificial Superintelligence (ASI)**: Hypothetical AI that surpasses human intelligence and cognitive abilities across virtually all domains.
+
+**Focus Today**: Current practical AI development focuses almost exclusively on ANI.",Python,,/demos/concepts/ai-concepts-demo/,,0,FALSE,"Details for Artificial Intelligence Concepts. Understanding the core concepts, subfields, capabilities, and ethical considerations of AI is essential for anyone working in or interacting with this rapidly evolving domain.",python,"Machine Learning,Deep Learning,AI Development,AI Engineering"
+Colour Theme Switcher Demo,colour-theme-switcher-demo,Demonstration of dynamic theme switching using CSS and JavaScript. The primary interaction point for this demo are the theme buttons. Each button is styled and has an ID that JavaScript uses to identify which theme to apply.,https://placehold.co/600x400/0EA5E9/FFFFFF?text=Theme+Switcher,"The `intro-block` and its child elements (heading, text, button) will have their appearance (background color, text color, border color, button style) updated by the JavaScript when a theme is changed.","A simple block listing key features, which also adapts its styling to the current theme.","The background of the interactive area, text colors, and link styling within this card will change accordings to the theme.","""<div class=""flex flex-wrap justify-center gap-3 mb-10"">
+    <button id=""playful-theme-btn""
+            class=""px-5 py-2 bg-sky-500 text-white font-semibold rounded-lg shadow-md hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-400 transition duration-200"">
+        Playful Theme
+    </button>
+    <button id=""dark-theme-btn""
+            class=""px-5 py-2 bg-slate-700 text-white font-semibold rounded-lg shadow-md hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition duration-200"">
+        Dark Theme
+    </button>
+    <button id=""professional-theme-btn""
+            class=""px-5 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 transition duration-200"">
+        Professional Theme
+    </button>
+</div>""",Python,,/demos/concepts/colour-theme-switcher-demo/,,0,FALSE,"Details for Colour Theme Switcher Demo. This interactive demo showcases how different visual themes (Playful, Dark, Professional) can be dynamically applied to a webpage. Clicking the theme buttons will change the appearance of the content blocks below, illustrating the adaptability of components to various styling rules. This is achieved by manipulating CSS classes or variables via JavaScript.",javascript,Web Design
+Comparison: Django Deployment Platforms,deploying-django-comparisons,"Heroku vs. Render vs. PythonAnywhere vs. Google App Engine vs. AWS Elastic Beanstalk. Deploying a Django application involves choosing a platform that balances ease of use, control, scalability, and cost. This guide compares five popular Platform-as-a-Service (PaaS) options.",https://placehold.co/600x400/6B7280/FFFFFF?text=Deploy+Compare,"For high scalability within the Google ecosystem, Google App Engine is powerful. For more control and deep integration with AWS, AWS Elastic Beanstalk provides flexibility but requires more configuration. Evaluate the trade-offs based on the comparison above and your specific requirements.","Google App Engine (Std): Highly scalable GCP service. Standard environment is sandboxed and simple; Flex offers Docker. Deep GCP integration.
+AWS Elastic Beanstalk: AWS PaaS. Manages EC2, Load Balancers, etc. More config options (and complexity) than Heroku/Render. Leverages AWS ecosystem.","All are PaaS providers, abstracting server management. All support Python/Django deployment. Most use `requirements.txt` for dependencies. Most offer managed database solutions. Most use environment variables for configuration/secrets. Most support Git-based deployment workflows. All require configuration for serving static files in production.","* All are PaaS providers, abstracting server management.
+* All support Python/Django deployment.
+* Most use `requirements.txt` for dependencies.
+* Most offer managed database solutions.
+* Most use environment variables for configuration/secrets.
+* Most support Git-based deployment workflows.
+* All require configuration for serving static files in production.",Python,,/demos/concepts/deploying-django-comparisons/,,0,FALSE,"Details for Comparison: There's no single ""best"" platform; the ideal choice depends on your project's needs, technical expertise, budget, and scalability requirements. For beginners or simple projects, PythonAnywhere offers the gentlest learning curve.
+* For rapid development and ease of use, **Heroku and Render are excellent, with Render often having more predictable pricing and better free tiers.","django,python",Web Development
+Data Engineering Concepts,data-engineering-demo,"Learn about Data Engineering principles, practices, tools, and its crucial role in supporting Data Science and Machine Learning. It forms the foundation upon which Data Science and Machine Learning activities are built.",https://placehold.co/600x400/10B981/FFFFFF?text=Data+Engineering,"Reliable Data Supply. Provides clean, consistent, and up-to-date data pipelines to feed model training and inference processes. Garbage in, garbage out. Data Engineering is a critical field that underpins modern data analytics, data science, and machine learning.","Designing and managing central repositories (Data Warehouses) optimized for storing structured, historical data for business intelligence and reporting. Often uses dimensional modeling (star/snowflake schemas).","Data Engineers design, build, and manage the infrastructure and pipelines necessary to transform raw data into reliable, usable assets. Their work ensures that data is available, clean, and accessible at scale, enabling data scientists to build accurate models and organizations to make data-driven decisions and deploy effective AI solutions.","def transform_data(df: pd.DataFrame) -> pd.DataFrame:
+    """"""Applies transformations to the DataFrame.""""""
+    if df.empty:
+        return df
+    print(""Transforming data..."")
+    # Example transformations:
+    # 1. Rename columns (e.g., make lowercase, replace spaces)
+    df.columns = df.columns.str.lower().str.replace(' ', '_')
+    # 2. Handle missing values (e.g., fill numerical with mean, categorical with 'Unknown')
+    if 'value' in df.columns:
+        mean_value = df['value'].mean()
+        df['value'].fillna(mean_value, inplace=True)
+        print(f""- Filled missing 'value' with mean: {mean_value:.2f}"")
+    if 'category' in df.columns:
+         df['category'].fillna('Unknown', inplace=True)
+         print(""- Filled missing 'category' with 'Unknown'"")
+    # 3. Convert data types (e.g., ensure date is datetime)
+    if 'date_column' in df.columns:
+        df['date_column'] = pd.to_datetime(df['date_column'], errors='coerce')
+        print(""- Converted 'date_column' to datetime"")
+    # 4. Create new features (e.g., calculate ratio)
+    if 'cost' in df.columns and 'revenue' in df.columns:
+        # Avoid division by zero
+        df['profit_margin'] = df.apply(lambda row: (row['revenue'] - row['cost']) / row['revenue'] if row['revenue'] else 0, axis=1)
+        print(""- Calculated 'profit_margin'"")",Python,,/demos/concepts/data-engineering-demo/,,0,FALSE,"Details for Data Engineering Concepts. Data Engineering is the discipline focused on the practical applications of data collection and processing. It involves designing, building, and maintaining the systems and infrastructure that allow organizations to collect, store, process, and analyze large volumes of data efficiently and reliably.",pandas,Data Analysis
+Data Wrangling,data-wrangling-project,"Upload a small CSV file (with headers) to see some common data wrangling steps applied, such as handling missing values, renaming columns, and creating a new feature",https://placehold.co/600x400/f97316/FFFFFF?text=Data+Wrangler,"If you load a file which does not need wrangling, then your get the following warning: Wrangling Steps Applied: No specific wrangling steps were applied (e.g., no missing values found).","The challenges faced when data wrangling are trying to figure out why there are missing vales, and also making sure that those valus which aren't missing, are still being accurately entered when collecting the data.",Data wrangling can be a powerful tool when designing a machine learning model. Having correctly formatted data is essential when it comes to predicting outcomes using a machine learning model. Poor training data will result in a poor machine learning model.,"""# Read CSV
+                    df = pd.read_csv(csv_file)
+                    original_head_html = df.head().to_html(classes='w-full text-sm text-left text-gray-500 dark:text-gray-400', border=0, index=False)
+                    original_columns = df.columns.tolist()
+                    original_shape = df.shape
+
+                    # --- Apply Wrangling Steps ---
+                    steps_applied = []
+                    df_wrangled = df.copy() # Work on a copy
+
+                    # 1. Handle Missing Numerical Values (Example: fill with median)
+                    numeric_cols = df_wrangled.select_dtypes(include=np.number).columns
+                    for col in numeric_cols:
+                        if df_wrangled[col].isnull().any():
+                            median_val = df_wrangled[col].median()
+                            df_wrangled[col].fillna(median_val, inplace=True)""",Python,,/demos/data-wrangler/,,,FALSE,"Data wrangling is the process of transforming raw, untouched data, into a useable format, ready to be used for data analysis, data mining, machine learning, or business analytics.","Python,Pandas,NumPy",Data Science
+Deploying Django to AWS Elastic Beanstalk,deploying-django-app-to-aws-elastic-beanstalk,"A step-by-step guide on deploying Django applications to AWS Elastic Beanstalk using the EB CLI, covering configuration, deployment, and troubleshooting.",https://placehold.co/600x400/F97316/FFFFFF?text=Deploy+to+AWS+EB,"Configure your project for Elastic Beanstalk deployment, requirements.txt lists Python dependencies. Ensure it includes: Django, gunicorn (Often used by default EB Python platforms), psycopg2-binary (If using AWS RDS PostgreSQL), mysqlclient (If using AWS RDS MySQL/MariaDB), whitenoise (If serving static files via Django/Gunicorn), django-storages[aws] and boto3 (If serving static/media from S3). Plus any other project dependencies.","Make sure this YAML configuration file is set up for AWS Elastic Beanstalk, defining settings, commands for deployment (like migrations), and OS packages for older Amazon Linux AMI platforms.","Check Logs: eb logs your-environment-name --tail 100 (quick), eb logs your-environment-name --all (full), eb logs your-environment-name --stream (live). Deployment Failures: Check deployment events and EB activity logs. Often errors in .platform hooks or .ebextensions commands, failed health checks.","#!/bin/bash
+# .platform/hooks/postdeploy/01_django_setup.sh
+# Note: This script runs as root by default. Use 'su' if needed to run as wsgi user.
+
+# Using source to load environment variables set by EB platform
+# The exact path might vary slightly, check your instance if needed
+source /var/app/venv/*/bin/activate
+# Navigate to the app directory where manage.py resides
+cd /var/app/current
+
+echo ""Running Django management commands...""
+
+# Run database migrations (leader_only is handled implicitly by EB for postdeploy)
+# Ensure DJANGO_SETTINGS_MODULE is set as an environment variable in EB config
+echo ""Applying database migrations...""
+python manage.py migrate --noinput
+
+# Optional: Collect static files if serving via Django/Whitenoise
+# If using S3, collectstatic should ideally run before deployment or in a prebuild hook.
+# echo ""Collecting static files...""
+# python manage.py collectstatic --noinput --clear
+
+# Optional: Create superuser (only run once or add conditional logic)
+# echo ""Checking for superuser...""
+# python manage.py shell -c ""from django.contrib.auth import get_user_model; User = get_user_model(); exit(0) if User.objects.filter(username='admin').exists() else exit(1)"" || python manage.py createsuperuser --noinput --username=admin --email=admin@example.com
+
+echo ""Django setup commands finished.""",Python,,/demos/concepts/deploying-django-app-to-aws-elastic-beanstalk/,,0,FALSE,"Details for Deploying Django to AWS Elastic Beanstalk. A working Django project committed to a Git repository (EB CLI uses Git). Python and Pip installed locally. An AWS Account. An IAM User with appropriate permissions for Elastic Beanstalk, EC2, S3, RDS, etc. (Configure AWS credentials locally).",django,Machine Learning
+Deploying Django to Google App Engine,deploying-django-app-to-google-app-engine,Guide on deploying Django applications to Google App Engine (GAE) Standard Environment using the gcloud CLI.,https://placehold.co/600x400/4285F4/FFFFFF?text=Deploy+to+GAE,Set up GCP Project: `gcloud init` and `gcloud config set project YOUR_PROJECT_ID`. 2. Enable APIs: `gcloud services enable cloudbuild.googleapis.com sqladmin.googleapis.com secretmanager.googleapis.com storage-component.googleapis.com appengine.googleapis.com`. 3. Set up Secrets: Create secrets in Secret Manager.,"Check Logs: GCP Console (Logging > Logs Explorer) or `gcloud app logs tail -s default` / `gcloud app logs read`. Build Failures: Check Cloud Build history. Often `requirements.txt` errors or missing files. 500 Server Errors: Check App Engine request logs (`stdout`, `stderr`). Common: DB connection, missing secrets/env vars, `ALLOWED_HOSTS`. Static Files Not Loading**: Direct serving: check `static_dir` in `app.yaml`. GCS: check bucket permissions.","This can be very confusing at first, but if you carefully follow the intructions, getting you Django project deployed to Google App Engine can be done smoothly.","runtime: python311 # Specify Python version
+entrypoint: gunicorn -b :$PORT your_project_name.wsgi:application
+
+instance_class: F1
+
+# Reference secrets from Secret Manager (Recommended)
+# env_variables:
+#   SECRET_KEY: ${sm://projects/YOUR_PROJECT_ID/secrets/YOUR_SECRET_KEY_NAME/versions/latest}
+#   DB_HOST: '/cloudsql/your-gcp-project-id:your-region:your-instance-name'
+#   DJANGO_SETTINGS_MODULE: 'your_project_name.settings'
+
+# Or set non-sensitive vars directly
+env_variables:
+  DJANGO_SETTINGS_MODULE: 'your_project_name.settings'
+  DB_HOST: '/cloudsql/your-gcp-project-id:your-region:your-instance-name'
+
+handlers:
+# Option 1: Serve directly via App Engine
+- url: /static
+  static_dir: staticfiles/
+# Option 2: Route to GCS (Recommended)
+# - url: /static/(.*)
+#   static_files: staticfiles/\\1
+#   upload: staticfiles/.*
+
+- url: /.*
+  script: auto
+  secure: always",Python,,/demos/concepts/deploying-django-app-to-google-app-engine/,,0,FALSE,"Details for Deploying Django to Google App Engine. These Python snippets for `settings.py` adapt a Django application for Google App Engine. They cover loading the `SECRET_KEY` (ideally from an environment variable linked to Secret Manager), setting `DEBUG` status based on the GAE environment.",django,"Web Development,Data Science,Data Analysis"
+Deploying Django to Heroku,deploying-django-app-to-heroku,Step-by-step guide for deploying Django applications to the Heroku platform using the Heroku CLI.,https://placehold.co/600x400/673AB7/FFFFFF?text=Deploy+to+Heroku,A working Django project committed to a Git repository. Python and Pip installed locally. A [Heroku account](https://signup.heroku.com/). The [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) installed and logged in (`heroku login`). Git installed locally.,"Heroku can be quite confusing sometimes, and no longer offers a 'free tier'. This makes testing out the service more difficult. However, they do offer a comprehensive platform, which once mastered, can be very good.","Check logs: `heroku logs --tail` (live) or `heroku logs`. Application Error**: Failed migrations, missing config vars, `Procfile`/`settings.py` issues. Static files not loading**: WhiteNoise config, `DISABLE_COLLECTSTATIC=1`, `DEBUG=False`. Database connection**: `DATABASE_URL` set, `psycopg2-binary` installed. H10 App Crashed / R10 Boot Timeout**: Gunicorn/`wsgi.py` errors, missing deps, port issues. Consult [Heroku Dev Center for Python](https://devcenter.heroku.com/articles/deploying-python)","""# SECRET_KEY
+SECRET_KEY = os.environ.get('SECRET_KEY', 'your-local-dev-secret-key-fallback')
+
+# DEBUG
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
+# ALLOWED_HOSTS
+ALLOWED_HOSTS = []
+HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME')
+if HEROKU_APP_NAME:
+    ALLOWED_HOSTS.append(f'{HEROKU_APP_NAME}.herokuapp.com')
+if DEBUG: ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+
+# Database (dj-database-url)
+import dj_database_url
+DATABASES = {'default': {}}
+db_url = os.environ.get('DATABASE_URL')
+if db_url:
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+else: # Fallback for local
+    DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3', 'NAME': BASE_DIR / 'db.sqlite3'}
+""",Python,,/demos/concepts/deploying-django-app-to-heroku/,,0,FALSE,"Details for Deploying Django to Heroku. Create these files in the root of your Django project. Procfile: Tells Heroku how to run your web process. Install Gunicorn: `pip install gunicorn` (add to `requirements.txt`). requirements.txt: Lists Python dependencies. `pip freeze > requirements.txt`. Ensure it includes: `Django`, `gunicorn`, `django-heroku` (optional), `psycopg2-binary` (for Heroku Postgres), `whitenoise`, `dj-database-url`. If using `django-heroku`, install it: `pip install django-heroku`. runtime.txt: Specifies Python version. Replace with your version (e.g., `python-3.11.5`). Check [Heroku supported runtimes](https://devcenter.heroku.com/articles/python-support#supported-runtimes).",bash,Technology Overview
+Deploying Django to PythonAnywhere,deploying-django-app-to-pythonanywhere,Step-by-step guide for deploying Django applications to PythonAnywhere.com.,https://placehold.co/600x400/34D399/FFFFFF?text=Deploy+to+PAW,To be detailed.,"Pythonanywhere setup is very different to the other main deployment options, and can be confusing at first. However, once you understand the differences, Pythonanywhere can be a very powerful deployment option.",To be detailed.,"""import os
+import sys
+
+# Add project directory to sys.path
+path = '/home/yourusername/your-repo-name' # Replace
+if path not in sys.path:
+    sys.path.insert(0, path)
+
+# Set DJANGO_SETTINGS_MODULE
+os.environ['DJANGO_SETTINGS_MODULE'] = 'your_project_name.settings' # Replace
+
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()""",Python,,/demos/concepts/deploying-django-app-to-pythonanywhere/,,0,FALSE,"Details for Deploying Django to PythonAnywhere. They have a generous free tier which is suitable for most projects, and the paid options are very good value.","Conceptual Understanding, Content Creation",Technology Overview
+Deploying Django to Render,deploying-django-app-to-render,Step-by-step guide for deploying Django applications to the Render platform.,https://placehold.co/600x400/0891B2/FFFFFF?text=Deploy+to+Render,To be detailed.,To be detailed.,To be detailed.,"""# Example render.yaml
+databases:
+  - name: mydjangodb
+    databaseName: mydjangodbname
+    user: mydjangouser
+    plan: free
+    region: oregon
+
+services:
+  - type: web
+    name: my-django-app
+    runtime: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: ""./build.sh""
+    startCommand: ""gunicorn your_project_name.wsgi:application""
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mydjangodb
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.5
+      - key: DJANGO_SETTINGS_MODULE
+        value: 'your_project_name.settings'""",Python,,/demos/concepts/deploying-django-app-to-render/,,0,FALSE,Details for Deploying Django to Render. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+DevOps & MLOps Concepts,devops-mlops-demo,Learn about DevOps principles and how they apply to Machine Learning (MLOps) for efficient AI development and deployment.,https://placehold.co/600x400/0D9488/FFFFFF?text=DevOps+MLOps,To be detailed.,To be detailed.,To be detailed.,"# Example GitHub Actions workflow snippet (.github/workflows/ci-cd.yml)
+
+name: Python CI/CD Example
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3 # Checks out repository code
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Run linters (e.g., Flake8)
+      run: flake8 .
+    - name: Run tests (e.g., Pytest)
+      run: pytest
+
+  # Optional: Deployment job (runs only on push to main if tests pass)
+  # deploy:
+  #   needs: build-and-test # Depends on the previous job succeeding
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Deploy to production (example command)
+  #     run: |
+  #       echo ""Deploying application...""
+  #       # Add actual deployment commands here (e.g., serverless deploy, docker push/run)",Python,,/demos/concepts/devops-mlops-demo/,,0,FALSE,Details for DevOps & MLOps Concepts. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Django Security Features,django-security-demo,"Learn about Django's built-in security features like CSRF protection, XSS prevention, and SQL injection defense.",https://placehold.co/600x400/E11D48/FFFFFF?text=Django+Security,To be detailed.,To be detailed.,To be detailed.,"from .models import Project
+from django.db.models import Q
+
+def search_results_view(request):
+    query = request.GET.get('q', '')
+    results = Project.objects.none() # Default to no results
+    if query:
+        # Django ORM automatically parameterizes 'query', preventing SQL injection
+        results = Project.objects.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        )
+    # ... then render template with results ...",Python,,/demos/concepts/django-security-demo/,,0,FALSE,Details for Django Security Features. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Django Testing Explained,django-testing-demo,"Learn about Django's testing framework, including model, view, and form testing.",https://placehold.co/600x400/F59E0B/FFFFFF?text=Django+Testing,To be detailed.,To be detailed.,To be detailed.,"from django.test import TestCase
+from .models import Project # Assuming Project model is in the same app (e.g., portfolio.models)
+# from django.utils.text import slugify # If you manually check slugification logic
+
+class ProjectModelTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        # Create objects needed for tests once per class; runs once before all tests in the class.
+        # This is more efficient for creating test data that doesn't change per test method.
+        cls.project = Project.objects.create(
+            title=""My Test Project"",
+            description=""Test description.""
+            # Add other required fields if any
+        )
+
+    def test_str_representation(self):
+        """"""Test the __str__ method returns the project title.""""""
+        self.assertEqual(str(self.project), ""My Test Project"")
+
+    def test_slug_generation_on_save(self):
+        """"""Test if slug is auto-generated correctly (assuming model's save() or a signal handles this).""""""
+        # Example: if your model auto-generates 'my-test-project' from 'My Test Project'
+        self.assertIsNotNone(self.project.slug, ""Slug should not be None after saving."")
+        # More specific check if you know the exact slug generation logic:
+        # self.assertEqual(self.project.slug, ""my-test-project"")
+        # If slug generation is complex, you might test the slugify utility directly or mock parts of it.",Python,,/demos/concepts/django-testing-demo/,,0,FALSE,Details for Django Testing Explained. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+DRF Concepts,drf-concepts-demo,"Learn about key concepts in Django REST Framework (DRF) for building Web APIs, especially for ML/AI applications.",https://placehold.co/600x400/4B5563/FFFFFF?text=DRF+Concepts,To be detailed.,To be detailed.,To be detailed.,"# portfolio/serializers.py (or your_app_name/serializers.py)
+from rest_framework import serializers
+from .models import Project # Assuming Project model is in the current app's models.py
+# Import related serializers if needed, e.g., for nested relationships
+# from skills.serializers import SkillSerializer # Example for a 'skills' app
+
+class ProjectSerializer(serializers.ModelSerializer):
+    # Example of adding a related field (if 'skills' is ManyToMany and you have a SkillSerializer)
+    # skills = SkillSerializer(many=True, read_only=True) # Makes skills readable in API output
+    # Or, for a simpler representation if Skill model has a __str__ method:
+    # skills = serializers.StringRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Project
+        # Specify fields to include in the API output
+        # Ensure all these fields exist on your Project model
+        fields = [
+            'id', 'title', 'slug', 'description', 'image_url',
+            'results_metrics', # e.g., a JSONField or TextField storing model performance
+            'github_url', 'demo_url',
+            'skills', # Will depend on how 'skills' is defined on the model and serializer
+            'topics', # Similar to 'skills'
+            'date_created', 'last_updated' # Common useful fields
+        ]
+        read_only_fields = ['slug', 'date_created', 'last_updated'] # Fields not expected in input or auto-set
+        # 'slug' is often generated automatically from the title on model save.
+        # 'date_created' and 'last_updated' are typically auto-managed by Django model fields.",Python,,/demos/concepts/drf-concepts-demo/,,0,FALSE,Details for DRF Concepts. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Ethical Hacking in AI/ML,ethical-hacking-demo,Learn about applying ethical hacking principles and an adversarial mindset to enhance the security of Machine Learning and AI systems.,https://placehold.co/600x400/374151/FFFFFF?text=Ethical+Hacking,To be detailed.,To be detailed.,To be detailed.,"# Scenario: An API endpoint /api/model/predict expects JSON like {""text_input"": ""some user query""} for an NLP model.
+
+# Ethical Hacking Mindset Questions to Ask:
+
+# 1. What if the JSON is malformed or incomplete?
+#    POST /api/model/predict Content-Type: application/json
+#    Body: {""text_input"": ""hello world""  <-- Missing closing brace
+#    Body: ""just a string, not json""
+#    Body: {}  <-- Empty JSON object
+
+# 2. What if unexpected data types are provided for fields?
+#    POST /api/model/predict Content-Type: application/json
+#    Body: {""text_input"": 12345}  <-- Number instead of string
+#    Body: {""text_input"": null}
+#    Body: {""text_input"": [""list"", ""of"", ""strings""]} <-- List instead of single string
+
+# 3. What if the input is excessively long or resource-intensive?
+#    POST /api/model/predict Content-Type: application/json
+#    Body: {""text_input"": ""[A_VERY_VERY_LONG_STRING_OF_SEVERAL_MEGABYTES...]""}
+#    Body: {""text_input"": ""??"" * 1000000} <-- Large number of emojis",Python,,/demos/concepts/ethical-hacking-demo/,,0,FALSE,Details for Ethical Hacking in AI/ML. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+EV Charging Load Prediction with PyTorch,ev-charging-load-prediction-pytorch,Learn about ev charging load prediction with PyTorch,https://placehold.co/600x400/F43F5E/FFFFFF?text=EV Charging+Load+Prediction,To be detailed.,To be detailed.,To be detailed.,"# ev_load_prediction_setup.py
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+import torch
+from torch import nn
+from torch import optim
+
+# --- Generate Dummy EV Charging Data ---
+ev_data = {
+    'session_ID': range(1, 101),
+    'Garage_ID': ['G1'] * 50 + ['G2'] * 50,
+    'User_ID': [f'User{i}' for i in range(1, 101)],
+    'User_private': np.random.choice([0.0, 1.0], 100),
+    'Start_plugin_hour': pd.to_datetime(['2023-01-01 10:00', '2023-01-01 11:00', '2023-01-01 12:00'] * 33 + ['2023-01-01 10:00']),
+    'El_kWh': np.random.uniform(0.5, 50, 100).round(2), # Target variable
+    'Duration_hours': np.random.uniform(0.1, 10, 100).round(2),
+    # Simplified month and weekday features (binary)
+    'month_plugin_Jan': [1.0] * 100, # All January
+    'month_plugin_Dec': [0.0] * 100,
+    'weekdays_plugin_Monday': np.random.choice([0.0, 1.0], 100),
+    'weekdays_plugin_Tuesday': np.random.choice([0.0, 1.0], 100)
+}",Python,,/demos/concepts/ev-charging-load-prediction-pytorch/,,0,FALSE,Details for EV Charging Load Prediction with PyTorch. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Feature Engineering Concepts,feature-engineering-demo,Learn about Feature Engineering techniques used to improve Machine Learning model performance by transforming raw data into informative features.,https://placehold.co/600x400/059669/FFFFFF?text=Feature+Engineering,To be detailed.,To be detailed.,To be detailed.,"import pandas as pd
+import numpy as np
+
+data = {'age': [25, 30, np.nan, 35], 'income': [50000, 60000, 75000, np.nan]}
+df = pd.DataFrame(data)
+
+# Calculate mean age (excluding NaN)
+mean_age = df['age'].mean()
+print(f""Mean age: {mean_age:.1f}"")
+
+# Fill missing 'age' values with the mean
+df['age'].fillna(mean_age, inplace=True)
+print(""DataFrame after age imputation:"")
+print(df)
+#   age   income
+# 0  25.0  50000.0
+# 1  30.0  60000.0
+# 2  30.0  75000.0  <- NaN replaced with mean (30.0)
+# 3  35.0      NaN",Python,,/demos/concepts/feature-engineering-demo/,,0,FALSE,Details for Feature Engineering Concepts. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Flask for Machine Learning APIs,flask-api-demo,"Learn how Flask, a Python microframework, is used for creating simple Machine Learning APIs. Includes a conceptual code example.",https://placehold.co/600x400/4B5563/FFFFFF?text=Flask+API,"This simple structure allows external applications or front-ends to send feature data (e.g., petal length and width) to the `/predict` endpoint and receive the model's prediction for the Iris species back in a standard JSON format.","While the learning curve for Flask isn't as steep as the one for Django, it can still be challenging to fully understand the different aspects involved in creating a Flask project.","While Django can certainly build more complex APIs, Flask's minimal nature often makes it a faster choice for creating these kinds of focused prediction microservices.","# Example app.py (Conceptual - Requires Flask, joblib, scikit-learn installed)
+# --- Imports ---
+from flask import Flask, request, jsonify
+import joblib
+import numpy as np
+import os # For robust path handling
+
+# --- App Initialization ---
+app = Flask(__name__)
+
+# --- Load Model (Load once on startup) ---
+MODEL_DIR = os.path.dirname(os.path.abspath(__file__)) # Gets directory of current file
+MODEL_PATH = os.path.join(MODEL_DIR, 'iris_model.pkl') # Path to the model file
+
+try:
+    # Assumes model was saved using joblib.dump(model, 'iris_model.pkl') in the same directory as app.py
+    model = joblib.load(MODEL_PATH)
+    # Define expected feature names and target names (replace with actual if different)
+    # These should match the features and target classes the model was trained on.
+    feature_names = ['petal length (cm)', 'petal width (cm)'] # Example: model trained on only these 2 features
+    target_names = ['setosa', 'versicolor', 'virginica'] # Iris species
+    print(f""""Model loaded successfully from {MODEL_PATH}."""")
+except FileNotFoundError:
+    print(f""""Error: Model file '{MODEL_PATH}' not found. Please ensure it's in the correct location."""")
+    model = None
+except Exception as e:
+    print(f""""Error loading model from {MODEL_PATH}: {e}"""")
+    model = None",Python,,/demos/concepts/flask-api-demo/,,0,FALSE,"Details for Flask for Machine Learning APIs. Content to be migrated from demo sections if applicable.  Flask is lightweight and provides just the essentials for web development, making it quick to get started for simple tasks like an API endpoint. It doesn't impose a strict project structure like Django, giving developers more freedom (which can be good or bad depending on the project scale). Creating a basic API endpoint often requires less boilerplate code compared to Django.","flask,numpy",Machine Learning
+Generative AI Concepts,generative-ai-demo,"Learn about Generative AI, including how it works, its applications in text, image, and code generation, and its role in modern AI.",https://placehold.co/600x400/DB2777/FFFFFF?text=Generative+AI,To be detailed.,To be detailed.,To be detailed.,"# Conceptual example using a hypothetical API client
+# (Actual APIs like OpenAI, Anthropic, Cohere have specific libraries/formats)
+
+# import some_genai_library
+
+# client = some_genai_library.Client(api_key=""YOUR_API_KEY"")
+
+prompt = ""Write a short poem about a rainy day in Stoke-on-Trent.""
+
+# --- Request 1: Lower temperature (more focused) ---
+try:
+    # response1 = client.generate(
+    #     prompt=prompt,
+    #     model=""some-large-model"",
+    #     max_tokens=100,
+    #     temperature=0.3 # Lower temperature -> less random
+    # )
+    # print(""Response 1 (Temp=0.3):\n"", response1.text)
+    print(""Conceptual Response 1 (Temp=0.3):\nGrey skies weep on Potteries' clay,\nDamp streets reflect the fading day.\n..."")
+except Exception as e:
+    print(f""Error generating response 1: {e}"")",Python,,/demos/concepts/generative-ai-demo/,,0,FALSE,Details for Generative AI Concepts. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Go (Golang) in ML/AI,go-concepts-demo,"Learn about Go (Golang) and its applications in Machine Learning and Data Science infrastructure, focusing on concurrency and performance.",https://placehold.co/600x400/0E7490/FFFFFF?text=Go+Concepts,To be detailed.,To be detailed.,To be detailed.,"package main
+
+import (
+ ""fmt""
+ ""sync"" // For WaitGroup
+ ""time""
+)
+
+// worker function that will be run as a goroutine
+func worker(id int, wg *sync.WaitGroup, messages chan string) {
+ defer wg.Done() // Decrement counter when goroutine finishes
+
+ fmt.Printf(""Worker %d starting\n"", id)
+ time.Sleep(time.Second) // Simulate some work
+ message := fmt.Sprintf(""Worker %d done"", id)
+ messages <- message // Send a message to the channel
+ fmt.Printf(""Worker %d finished\n"", id)
+}
+
+func main() {
+ numWorkers := 3
+ var wg sync.WaitGroup // Create a WaitGroup to wait for all goroutines
+ messages := make(chan string, numWorkers) // Buffered channel to collect messages",Python,,/demos/concepts/go-concepts-demo/,,0,FALSE,Details for Go (Golang) in ML/AI. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Image Classification,image-classification-project,"Upload an image (like a photo of an animal, object, or scene) and this demo will use the pre-trained MobileNetV2 model to predict what it sees.",https://placehold.co/600x400/f97316/FFFFFF?text=Image+Classifier,coming soon,na,na,"""# 1. Read image content into memory
+                image_bytes = uploaded_image.read()
+
+                # 2. Load image using Keras utils from bytes
+                # Use io.BytesIO to treat the bytes as a file
+                img = keras_image_utils.load_img(io.BytesIO(image_bytes), target_size=(224, 224))
+
+                # 3. Prepare for display (convert original bytes to base64)
+                # Determine image format (optional, but good for data URI)
+                image_format = uploaded_image.content_type.split('/')[-1] # e.g., 'jpeg', 'png'
+                uploaded_image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+                # Prepend the data URI scheme
+                uploaded_image_base64 = f""data:{uploaded_image.content_type};base64,{uploaded_image_base64}""
+
+                # 4. Preprocess for prediction
+                img_array = keras_image_utils.img_to_array(img)
+                img_array_expanded = np.expand_dims(img_array, axis=0)
+                img_preprocessed = preprocess_input(img_array_expanded)
+
+                # 5. Predict
+                predictions = image_model.predict(img_preprocessed)
+                decoded = decode_predictions(predictions, top=3)[0]
+                prediction_results = [{'label': label.replace('_', ' '), 'probability': float(prob) * 100} for (_, label, prob) in decoded]""",Python,,,,0,,na,"Python,Matplotlib,NumPy",Data Science
+Java in ML/AI,java-concepts-demo,"Learn about Java's role in the Machine Learning and Data Science ecosystem, including Big Data (Spark, Hadoop) and enterprise AI systems.",https://placehold.co/600x400/F97316/FFFFFF?text=Java+Concepts,To be detailed.,To be detailed.,To be detailed.,"import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
+import static org.apache.spark.sql.functions.col; // For using col() function
+
+// This is a conceptual snippet. A full application would require Spark setup,
+// dependencies (e.g., via Maven or Gradle), and proper error handling.
+
+public class SparkJavaExample {
+
+    public static void main(String[] args) {
+        // Create a SparkSession (or get an existing one)
+        SparkSession spark = SparkSession.builder()
+            .appName(""JavaSparkExample"")
+            .master(""local[*]"") // Use local master for testing; configure for cluster in production
+            .getOrCreate();
+
+        // Assume df is loaded, e.g., from a JSON file, database, or other source
+        // For example:
+        // Dataset<Row> df = spark.read().json(""path/to/your/data.json"");
+        // Or, creating a dummy DataFrame for illustration:
+        // List<Row> data = Arrays.asList(
+        //     RowFactory.create(""Alice"", 25),
+        //     RowFactory.create(""Bob"", 35),
+        //     RowFactory.create(""Charlie"", 28)
+        // );
+        // StructType schema = new StructType(new StructField[]{
+        //     new StructField(""name"", DataTypes.StringType, false, Metadata.empty()),
+        //     new StructField(""age"", DataTypes.IntegerType, false, Metadata.empty())
+        // });
+        // Dataset<Row> df = spark.createDataFrame(data, schema);",Python,,/demos/concepts/java-concepts-demo/,,0,FALSE,Details for Java in ML/AI. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Jupyter Notebooks in ML/DS,jupyter-demo,Learn about Jupyter Notebooks and their importance for interactive computing in Data Science and Machine Learning workflows.,https://placehold.co/600x400/F59E0B/FFFFFF?text=Jupyter+Notebooks,To be detailed.,To be detailed.,To be detailed.,"# Standard library imports
+import os
+
+# Third-party library imports
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Configure visualizations
+%matplotlib inline 
+# sns.set_theme(style=""whitegrid"") # Example theme
+
+# Load data from a CSV file
+# Ensure 'sales_data.csv' is in the same directory or provide the correct path
+try:
+    df = pd.read_csv('sales_data.csv')
+    # Display the first few rows and basic info
+    print(""Data loaded successfully. First 5 rows:"")
+    display(df.head()) # 'display()' is often better for DataFrames in notebooks
+    print(""\nDataFrame Info:"")
+    df.info()
+except FileNotFoundError:
+    print(""Error: 'sales_data.csv' not found. Please check the file path."")
+    df = pd.DataFrame() # Create an empty DataFrame to prevent further errors",Python,,/demos/concepts/jupyter-demo/,,0,FALSE,Details for Jupyter Notebooks in ML/DS. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Key Django Concepts,django-concepts-demo,Learn about key Django framework features.,https://placehold.co/600x400/16A34A/FFFFFF?text=Django+Concepts,To be detailed.,To be detailed.,To be detailed.,"from django.db import models
+from django.utils import timezone
+
+class Project(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    date_created = models.DateField(default=timezone.now)
+    # Relationships like ForeignKey, ManyToManyField are also defined here
+    # skills = models.ManyToManyField(Skill)
+
+    def __str__(self):
+        return self.title",Python,,/demos/concepts/django-concepts-demo/,,0,FALSE,Details for Key Django Concepts. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Kotlin in AI & Android,kotlin-concepts-demo,"Learn about Kotlin, its features, and its role in Android app development, especially for on-device AI with TensorFlow Lite.",https://placehold.co/600x400/8B5CF6/FFFFFF?text=Kotlin+Concepts,To be detailed.,To be detailed.,To be detailed.,"// Conceptual Kotlin code, often part of an Android Activity, Fragment, or ViewModel
+// Requires TensorFlow Lite library added to the Android project (build.gradle)
+
+import android.content.Context
+import android.graphics.Bitmap
+import android.util.Log
+import org.tensorflow.lite.DataType
+import org.tensorflow.lite.Interpreter
+import org.tensorflow.lite.support.common.FileUtil
+import org.tensorflow.lite.support.common.ops.NormalizeOp
+import org.tensorflow.lite.support.image.ImageProcessor
+import org.tensorflow.lite.support.image.TensorImage
+import org.tensorflow.lite.support.image.ops.ResizeOp
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import java.io.IOException
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+
+class ImageClassifier(context: Context, modelName: String = ""mobilenet_v1_1.0_224.tflite"") {
+
+    private var tfliteInterpreter: Interpreter? = null
+    private var labels: List<String> = listOf() // Load your labels, e.g., from a text file
+    private val imageSizeX: Int // Model's expected input image width
+    private val imageSizeY: Int // Model's expected input image height
+
+    companion object {
+        private const val TAG = ""ImageClassifier""
+        private const val NUM_CLASSES = 1001 // Example for MobileNet
+    }",Python,,/demos/concepts/kotlin-concepts-demo/,,0,FALSE,Details for Kotlin in AI & Android. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Languages for ML/AI & Data Science,language-comparison-demo,"A comparison of Python, R, SQL, Scala, Java, C++, and other programming languages for Machine Learning, AI, and Data Science workflows.",https://placehold.co/600x400/A855F7/FFFFFF?text=Lang+Compare,To be detailed.,To be detailed.,To be detailed.,"import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+# Load data (assuming 'data.csv' exists with 'feature1', 'feature2', 'target')
+# df = pd.read_csv(""data.csv"")
+# For demonstration, creating a dummy DataFrame:
+data = {'feature1': [1, 2, 3, 4, 5, 6, 7, 8],
+        'feature2': [2, 3, 4, 5, 6, 7, 8, 9],
+        'target':   [0, 0, 0, 0, 1, 1, 1, 1]}
+df = pd.DataFrame(data)
+
+
+# Basic preprocessing (example: drop rows with any missing values)
+df.dropna(inplace=True) # Ensure no missing values for this simple example
+
+if not df.empty and 'target' in df.columns:
+    X = df[['feature1', 'feature2']] # Features
+    y = df['target']                 # Target variable
+
+    # Split data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+
+    # Initialize and train a Logistic Regression model
+    model = LogisticRegression()
+    model.fit(X_train, y_train)
+
+    # Make predictions and evaluate
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f""Model Accuracy: {accuracy:.2f}"")",Python,,/demos/concepts/language-comparison-demo/,,0,FALSE,Details for Languages for ML/AI & Data Science. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Machine Translation using Seq2Seq,machine-translation-seq2seq-keras,"Learn about machine translation, using seq2seq and keras",https://placehold.co/600x400/F43F5E/FFFFFF?text=Machine+Translation+Demo,To be detailed.,To be detailed.,To be detailed.,"import numpy as np
+import re
+
+# --- Configuration ---
+# data_path = ""path/to/your/translation_pairs.txt"" # e.g., ""deu.txt"" for German-English
+# For demonstration, we'll assume 'lines' would be populated by reading this file.
+# lines = [""Go.\tGeh."", ""Hi.\tHallo."", ""Run!\tLauf!""] # Example lines
+
+# --- Initialization ---
+input_docs = []          # To store source language sentences
+target_docs = []         # To store target language sentences (with <START>/<END>)
+input_tokens = set()     # Vocabulary for source language
+target_tokens = set()    # Vocabulary for target language (including <START>/<END>)
+
+# --- Processing Lines (Conceptual - actual file reading omitted for brevity) ---
+# Simulating reading a few lines from a file like 'deu.txt'
+# where each line is 'english_sentence\tgerman_sentence'
+# For the actual script, lines would come from:
+# with open(data_path, 'r', encoding='utf-8') as f:
+#   lines = f.read().split('\n')
+
+# Example: Process a small number of lines
+# sample_lines = [""I am cold.\tMir ist kalt."", ""Help me.\tHilf mir!""]
+# for line in sample_lines[:10000]: # Limiting for example
+#     parts = line.split('\t')
+#     if len(parts) < 2:
+#         continue
+#     input_doc, target_doc_raw = parts[0], parts[1]
+#     input_docs.append(input_doc)
+#
+#     # Preprocess target_doc: add <START>, <END> tokens
+#     # The regex re.findall(r""[\w']+|[^\s\w]"", target_doc_raw) handles words and punctuation separately.
+#     target_doc = "" "".join(re.findall(r""[\w']+|[^\s\w]"", target_doc_raw))
+#     target_doc = '<START> ' + target_doc + ' <END>'
+#     target_docs.append(target_doc)",Python,,/demos/concepts/machine-translation-seq2seq-keras/,,0,FALSE,Details for Machine Translation using Seq2Seq. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+News Article Analysis with TF-IDF,news-analysis-tfidf-demo,Learn how Term Frequency-Inverse Document Frequency (TF-IDF) is used to analyze news articles and identify key topics. Includes Python code examples.,https://placehold.co/600x400/F43F5E/FFFFFF?text=News+Analysis,To be detailed.,To be detailed.,To be detailed.,"# --- Core Imports ---
+import pandas as pd
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, TfidfVectorizer
+import nltk
+import re
+from nltk.corpus import wordnet, stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+from collections import Counter
+
+# --- Sample Articles (Conceptual - actual articles would be loaded) ---
+# articles = [article_1_text, article_2_text, ..., article_10_text]
+# For this example, assume 'articles' is a list of strings, where each string is a news article.
+
+# --- 1. Text Preprocessing ---
+stop_words = stopwords.words('english')
+normalizer = WordNetLemmatizer()
+
+def get_part_of_speech(word):
+    # Simplified POS tagging for lemmatization
+    probable_part_of_speech = wordnet.synsets(word)
+    pos_counts = Counter()
+    pos_counts[""n""] = len([item for item in probable_part_of_speech if item.pos()==""n""])
+    pos_counts[""v""] = len([item for item in probable_part_of_speech if item.pos()==""v""])
+    pos_counts[""a""] = len([item for item in probable_part_of_speech if item.pos()==""a""])
+    pos_counts[""r""] = len([item for item in probable_part_of_speech if item.pos()==""r""])
+    if not pos_counts: # Handle cases where no synsets are found
+        return 'n' # Default to noun
+    most_likely_part_of_speech = pos_counts.most_common(1)[0][0]
+    return most_likely_part_of_speech
+
+def preprocess_text(text):
+    cleaned = re.sub(r'\W+', ' ', text).lower() # Remove non-alphanumeric, lowercase
+    tokenized = word_tokenize(cleaned)
+    # Lemmatize tokens, excluding stopwords and digits
+    normalized = "" "".join([
+        normalizer.lemmatize(token, get_part_of_speech(token))
+        for token in tokenized
+        if token not in stop_words and not re.match(r'\d+', token) and len(token) > 1 # Basic filter
+    ])
+    return normalized",Python,,,,,FALSE,,,
+OOP Concepts for ML/DS,oop-concepts-demo,Understanding Object-Oriented Programming (OOP) principles in Python and their application in Data Science and Machine Learning libraries.,https://placehold.co/600x400/EC4899/FFFFFF?text=OOP+Concepts,To be detailed.,To be detailed.,To be detailed.,"""# Define a blueprint for data points
+class DataPoint:
+    """"""Represents a single data point with features and an optional label.""""""
+
+    # Constructor method (__init__) is called when an object is created
+    # 'self' refers to the instance being created
+    def __init__(self, feature1: float, feature2: float, label: str = None):
+        # Attributes store the object's state
+        self.feature1 = feature1
+        self.feature2 = feature2
+        self.label = label
+        print(f""DataPoint created: F1={self.feature1}, F2={self.feature2}, Label={self.label}"")
+
+    # A method defines behavior associated with the object
+    def display(self):
+        """"""Prints a representation of the data point.""""""
+        label_str = f""Label: {self.label}"" if self.label is not None else ""No Label""
+        print(f""Point(Feature1={self.feature1}, Feature2={self.feature2}, {label_str})"")
+
+    # Another method
+    def get_features_as_list(self) -> list[float]:
+        """"""Returns the features as a list.""""""
+        return [self.feature1, self.feature2]",Python,,/demos/concepts/oop-concepts-demo/,,0,FALSE,Details for OOP Concepts for ML/DS. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Overview: Django Deployment Options,deploying-django-options,"Exploring different options (PaaS, IaaS, FaaS, Containers) for deploying Django web applications.",https://placehold.co/600x400/71717A/FFFFFF?text=Deploy+Options,To be detailed.,To be detailed.,To be detailed.,"IaaS providers give you virtual machines (servers), storage, and networking components. You have full control but manage everything from the OS upwards.
+Examples:
+* Amazon Web Services (AWS EC2)
+* Google Compute Engine (GCE)
+* Microsoft Azure Virtual Machines
+* DigitalOcean Droplets
+* Linode, Vultr
+
+**Pros (IaaS):**
+* Maximum control over server environment.
+* Potentially lower costs at scale (if managed efficiently).
+* Full choice of OS and software stack.
+**Cons (IaaS):**
+* Requires significant server administration/DevOps knowledge.
+* Responsible for setup, security, patching, scaling, backups.
+* Longer setup time compared to PaaS.",Python,,/demos/concepts/deploying-django-options/,,0,FALSE,Details for Overview: Django Deployment Options. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+PySpark Concepts,pyspark-concepts-demo,"Learn about PySpark, the Python API for Apache Spark, used for large-scale data processing and distributed machine learning.",https://placehold.co/600x400/F97316/FFFFFF?text=PySpark,To be detailed.,To be detailed.,To be detailed.,"# Assuming 'spark' is an existing SparkSession object,
+# typically created via:
+# from pyspark.sql import SparkSession
+# spark = SparkSession.builder.appName(""PySparkDemo"").getOrCreate()
+
+# --- Loading Data (Conceptual) ---
+# Data is usually read from distributed storage (HDFS, S3, ADLS) or databases.
+# df = spark.read.csv(""s3://bucket/path/to/large/data.csv"", header=True, inferSchema=True)
+# df = spark.read.parquet(""hdfs:///user/data/sales.parquet"")
+
+# For demonstration, creating a small DataFrame:
+data = [(""Alice"", 34, ""New York"", 80000),
+        (""Bob"", 25, ""Los Angeles"", 65000),
+        (""Charlie"", 34, ""New York"", 90000),
+        (""David"", 42, ""Chicago"", 110000),
+        (""Eve"", 25, ""Los Angeles"", 70000)]
+columns = [""name"", ""age"", ""city"", ""salary""]
+df = spark.createDataFrame(data, columns)
+print(""Initial DataFrame:"")
+df.show()",Python,,/demos/concepts/pyspark-concepts-demo/,,0,FALSE,Details for PySpark Concepts. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Pyspark Wikipedia Clickstream Analysis,pyspark-wikipedia-clickstream-analysis,Learn wikepedia clickstream analysis with pyspark.,https://placehold.co/600x400/F43F5E/FFFFFF?text=Wikipedia+Clickstream+Analysis,To be detailed.,To be detailed.,To be detailed.,"# Define the path to the clickstream data
+# (Assuming data is in a directory named 'cleaned/clickstream' and is tab-separated)
+data_path = ""./cleaned/clickstream/""
+
+# Read the data into a DataFrame
+# The raw clickstream data uses tab (\t) as a delimiter and has a header.
+clickstream_df = spark.read \
+    .option(""header"", True) \
+    .option(""delimiter"", ""\t"") \
+    .option(""inferSchema"", True) \
+    .csv(data_path)
+
+# Display the first few rows of the DataFrame
+print(""Sample of the loaded data:"")
+clickstream_df.show(5, truncate=False)
+
+# Print the schema of the DataFrame
+print(""DataFrame Schema:"")
+clickstream_df.printSchema()
+
+# --- Basic Transformations ---
+
+# Drop an unnecessary column (e.g., 'language_code' if all data is English)
+if 'language_code' in clickstream_df.columns:
+    clickstream_df = clickstream_df.drop(""language_code"")
+    print(""Dropped 'language_code' column."")
+
+# Rename columns for clarity (e.g., 'referrer' to 'source_page', 'resource' to 'target_page')
+clickstream_df = clickstream_df \
+    .withColumnRenamed(""referrer"", ""source_page"") \
+    .withColumnRenamed(""resource"", ""target_page"")
+print(""Renamed columns 'referrer' to 'source_page' and 'resource' to 'target_page'."")
+
+# Display schema and sample data after transformations
+print(""Schema after transformations:"")
+clickstream_df.printSchema()
+print(""Sample data after transformations:"")
+clickstream_df.show(5, truncate=False)",Python,,/demos/concepts/pyspark-wikipedia-clickstream-analysis/,,0,FALSE,Details for Pyspark Wikipedia Clickstream Analysis. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Python Concepts Demo,python-concepts-demo,"Interactive examples of core Python concepts like lists, dictionaries, loops, and functions, relevant to data science and machine learning.",https://placehold.co/600x400/84CC16/FFFFFF?text=Python+Concepts,To be detailed.,To be detailed.,To be detailed.,"# Creating and modifying a list
+my_list = [10, 20, 30, 'apple']
+print(f""Initial list: {my_list}"")
+
+my_list.append(40)      # Add item to end
+print(f""After append(40): {my_list}"")
+
+my_list[0] = 5          # Change first item (index 0)
+print(f""After changing index 0: {my_list}"")
+
+item_at_index_1 = my_list[1] # Access item by index
+print(f""Item at index 1: {item_at_index_1}"") # Output: 20
+
+list_length = len(my_list)     # Get length
+print(f""Length of list: {list_length}"") # Output: 5",Python,,/demos/concepts/python-concepts-demo/,,0,FALSE,Details for Python Concepts Demo. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+PyTorch Concepts,pytorch-concepts-demo,"Learn about core PyTorch concepts for deep learning, including Tensors, Autograd, nn.Module, and training loops.",https://placehold.co/600x400/EF4444/FFFFFF?text=PyTorch,To be detailed.,To be detailed.,To be detailed.,"import torch
+
+# Create tensors. 'requires_grad=True' tells PyTorch to track operations
+# on these tensors for automatic gradient calculation.
+x = torch.tensor([[1., 2.], [3., 4.]], requires_grad=True)
+w = torch.tensor([[0.5], [0.1]], requires_grad=True)
+b = torch.tensor([0.2], requires_grad=True)
+
+# --- Define a simple computation graph ---
+# 1. Linear transformation: y = x * w + b (using matrix multiplication '@')
+y = x @ w + b
+# 'y' now has a 'grad_fn' attribute pointing to the operation that created it.
+
+# 2. Calculate the mean of y (resulting in a scalar tensor)
+z = y.mean()
+# 'z' also has a 'grad_fn'.
+
+print(f""Input x:\n{x}"")
+print(f""Weights w:\n{w}"")
+print(f""Bias b:\n{b}"")
+print(f""Output y (y = x@w + b):\n{y}"")
+print(f""Final scalar z (z = y.mean()): {z}"")",Python,,/demos/concepts/pytorch-concepts-demo/,,0,FALSE,Details for PyTorch Concepts. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+R Concepts for Data Science,r-concepts-demo,"Learn about core R language concepts, data structures (vectors, data frames), and key packages like dplyr and ggplot2 for statistical computing and data science.",https://placehold.co/600x400/06B6D4/FFFFFF?text=R+Concepts,To be detailed.,To be detailed.,To be detailed.,"# Create atomic vectors of different types
+heights_cm <- c(175, 182, 168, 179)   # Numeric vector
+names <- c(""Alice"", ""Bob"", ""Charlie"", ""David"") # Character vector
+is_student <- c(TRUE, FALSE, TRUE, TRUE)      # Logical vector
+
+# Create a data frame from these vectors
+student_data <- data.frame(
+  StudentName = names,      # Column 1
+  Height = heights_cm,    # Column 2
+  IsActiveStudent = is_student # Column 3
+)
+
+print(""Created Data Frame:"")
+print(student_data)
+# Output:
+#   StudentName Height IsActiveStudent
+# 1       Alice    175            TRUE
+# 2         Bob    182           FALSE
+# 3     Charlie    168            TRUE
+# 4       David    179            TRUE
+
+# Access a column using $ (returns a vector)
+print(""\nAccessing the Height column:"")
+print(student_data$Height)
+# Output: [1] 175 182 168 179",Python,,/demos/concepts/r-concepts-demo/,,0,FALSE,Details for R Concepts for Data Science. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Ruby & Rails in ML/AI,ruby-concepts-demo,Learn about Ruby and the Ruby on Rails framework and how they typically integrate with external Machine Learning services via APIs.,https://placehold.co/600x400/E11D48/FFFFFF?text=Ruby+Rails,To be detailed.,To be detailed.,To be detailed.,"# Example: app/controllers/predictions_controller.rb
+# This controller handles requests related to getting predictions.
+
+# Standard Ruby libraries for HTTP requests and JSON parsing
+require 'net/http'
+require 'uri'
+require 'json'
+
+class PredictionsController < ApplicationController
+
+  # Renders the form for user input (e.g., text area)
+  # Corresponds to GET /predict/new
+  def new
+    # Implicitly renders app/views/predictions/new.html.erb
+  end
+
+  # Processes the form submission and calls the ML API
+  # Corresponds to POST /predict
+  def create
+    # Safely get input text from form parameters submitted by the view
+    input_text = params.permit(:text_to_analyze)[:text_to_analyze]
+
+    # Basic validation
+    if input_text.blank?
+      flash.now[:error] = ""Please enter some text to analyze.""
+      render :new, status: :unprocessable_entity # Re-render form with error
+      return
+    end",Python,,/demos/concepts/ruby-concepts-demo/,,0,FALSE,Details for Ruby & Rails in ML/AI. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Scala Concepts for Big Data & ML,scala-concepts-demo,"Learn about the Scala programming language, its functional features, JVM integration, and its key role in Apache Spark for Big Data and Machine Learning.",https://placehold.co/600x400/F43F5E/FFFFFF?text=Scala+Spark,To be detailed.,To be detailed.,To be detailed.,"// Build tool dependencies (e.g., build.sbt) would include Spark libraries.
+import org.apache.spark.sql.{SparkSession, DataFrame, Row}
+import org.apache.spark.sql.functions._ // Import common functions like col(), avg(), count()
+import org.apache.spark.rdd.RDD // For RDD example
+
+object SparkScalaDemo {
+
+  def main(args: Array[String]): Unit = {
+
+    // Create a SparkSession (entry point)
+    val spark = SparkSession.builder
+      .appName(""ScalaSparkDemo"")
+      .master(""local[*]"") // Use local mode for demo; set master URL for cluster
+      // .config(""spark.some.config.option"", ""some-value"") // Add configurations if needed
+      .getOrCreate()
+
+    // Import implicits for convenience methods like .toDF() and $"""" syntax
+    import spark.implicits._
+
+    println(""SparkSession created."")
+
+    // --- RDD Example: Word Count ---
+    println(""\n--- RDD Word Count Example ---"")
+    // Load text data into an RDD (Resilient Distributed Dataset)
+    // val lines: RDD[String] = spark.sparkContext.textFile(""path/to/your/textfile.txt"")
+    // For demo, create RDD from a local collection:
+    val lines: RDD[String] = spark.sparkContext.parallelize(Seq(
+      ""Apache Spark is a unified analytics engine"",
+      ""for large-scale data processing"",
+      ""Spark provides high-level APIs""
+    ))",Python,,/demos/concepts/scala-concepts-demo/,,0,FALSE,Details for Scala Concepts for Big Data & ML. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Security in ML AI & Data Science,data-security-demo,"Understanding key security risks and considerations in machine learning, AI, and data science, including data privacy, model security, and infrastructure protection.",https://placehold.co/600x400/F43F5E/FFFFFF?text=Data+Security,To be detailed.,To be detailed.,To be detailed.,"**Key Risks:**
+* **Adversarial Attacks (Evasion)**: Crafting specific, often subtle, inputs designed to fool a model into making incorrect predictions. *(e.g., adding tiny, almost invisible noise to an image of a 'stop' sign might cause a self-driving car's model to classify it as a 'speed limit' sign).*
+* **Data Poisoning (Causative Attack)**: Injecting malicious data into the training set to compromise the resulting model's performance, introduce biases, or create backdoors triggered by specific inputs.
+* **Model Inversion/Extraction**: Trying to reconstruct sensitive information about the training data (membership inference) or steal the model's architecture and parameters (model stealing) by repeatedly querying its API.
+
+**Mitigation Techniques:**
+* **Adversarial Training**: Including carefully crafted adversarial examples during the training process to improve model robustness against evasion attacks.
+* **Input Validation/Sanitization**: Rigorously checking, cleaning, and normalizing inputs before feeding them to the model to detect or remove potential adversarial perturbations.
+* **Data Provenance & Filtering**: Carefully vetting training data sources and implementing filters to detect potentially poisoned samples.
+* **Defensive Distillation**: Training a model on the softened probability outputs of another model trained on the same task, which can sometimes increase robustness.
+* **Output Perturbation/Randomization**: Adding noise to model outputs or using ensemble methods can make model extraction harder.
+* **Monitoring & Anomaly Detection**: Implementing systems to detect unusual input patterns, query frequencies, or prediction distributions that might indicate an attack.
+* **Rate Limiting & Access Control for Model API**: Limiting query rates and restricting access to the model's prediction endpoint.
+
+**Importance**: Ensures the reliability, integrity, and trustworthiness of the AI system's predictions and decisions, preventing manipulation and protecting intellectual property.",Python,,/demos/concepts/data-security-demo/,,0,FALSE,Details for Security in ML AI & Data Science. Content to be migrated from demo sections if applicable.,"Conceptual Understanding, Content Creation",Technology Overview
+Sentiment Analysis,sentiment-analysis-project,"Enter a sentence or paragraph below, and this demo will use a pre-trained DistilBERT model (from Hugging Face Transformers) to predict whether the sentiment is positive or negative.",https://placehold.co/600x400/f97316/FFFFFF?text=Sentiment+Analysis,coming soon,na,na,"""if request.method == 'POST' and TRANSFORMERS_AVAILABLE and SENTIMENT_MODEL_LOADED:
+        form = SentimentAnalysisForm(request.POST)
+        if form.is_valid():
+            submitted_text = form.cleaned_data['text_input']
+            try:
+                # Run text through the pipeline
+                # Check if pipeline object actually exists before calling
+                if sentiment_pipeline:
+                    results = sentiment_pipeline(submitted_text)
+                    if results:
+                        sentiment_result = results[0] # Get the first result dictionary
+                        sentiment_result['score'] = round(sentiment_result['score'] * 100, 1)""",Python,,,,,1,na,"Python,Pandas,NumPy",Data Science

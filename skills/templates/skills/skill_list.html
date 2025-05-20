@@ -1,0 +1,114 @@
+{# skills/templates/skills/skill_list.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load markdownify %}
+
+{% block title %}
+    {{ page_title|default:"Technical Skills" }} - Portfolio
+{% endblock %}
+
+{% block meta_description %}
+    {% if meta_description %}
+        {{ meta_description|markdownify|striptags|truncatewords:30 }}
+    {% else %}
+        A comprehensive overview of technical skills, categorized for clarity. Explore expertise in programming, frameworks, and tools.
+    {% endif %}
+{% endblock %}
+
+{% block meta_keywords %}
+    {{ meta_keywords|default:"technical skills, programming languages, software frameworks, development tools, expertise, proficiency, portfolio" }}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-12">
+
+    <header class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-500 via-green-500 to-lime-600 dark:from-emerald-400 dark:via-green-400 dark:to-lime-500 bg-clip-text text-transparent pb-2">
+            {{ page_title|default:"My Technical Skillset" }}
+        </h1>
+        {% if introductory_text %}
+            <p class="mt-4 text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+                {{ introductory_text|markdownify }}
+            </p>
+        {% else %}
+            <p class="mt-4 text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+                Here's a breakdown of the key technologies and methodologies I work with, organized by category. Click on any skill to see more details and related projects.
+            </p>
+        {% endif %}
+    </header>
+
+    <div class="max-w-6xl mx-auto space-y-12">
+        {% for category in categories %}
+            <section aria-labelledby="category-heading-{{ category.slug|default:category.id }}" class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-xl dark:shadow-lime-900/20">
+                <h2 id="category-heading-{{ category.slug|default:category.id }}" class="text-2xl md:text-3xl font-semibold mb-6 border-b-2 border-green-500 dark:border-lime-500 pb-3 text-gray-800 dark:text-gray-100 flex items-center">
+                    {% if category.icon_svg %}
+                        <span class="mr-3 h-7 w-7 text-green-600 dark:text-lime-400">{{ category.icon_svg|safe }}</span>
+                    {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-green-600 dark:text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                    {% endif %}
+                    {{ category.name }}
+                </h2>
+                {% if category.description %}
+                    <p class="mb-6 text-gray-600 dark:text-gray-400">{{ category.description|markdownify|striptags }}</p>
+                {% endif %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                    {% for skill in category.skills.all %}
+                        <a href="{{ skill.get_absolute_url }}"
+                           aria-label="View details for skill: {{ skill.name }}"
+                           class="group block bg-gray-50 dark:bg-gray-700/60 p-4 rounded-lg shadow-md hover:shadow-lg dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800 transform hover:-translate-y-0.5 hover:scale-[1.02] transition-all duration-200 ease-in-out text-center">
+                            {# You could add skill.icon_svg here if available #}
+                            <span class="font-medium text-gray-700 dark:text-gray-200 group-hover:text-green-600 dark:group-hover:text-lime-400 transition-colors duration-200">{{ skill.name }}</span>
+                            {% if skill.proficiency_level %}
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ skill.get_proficiency_level_display }}</p>
+                            {% endif %}
+                        </a>
+                    {% empty %}
+                        <p class="text-gray-500 dark:text-gray-400 italic col-span-full py-4">No specific skills listed in this category yet.</p>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endfor %}
+
+        {% if uncategorized_skills %}
+             <section aria-labelledby="uncategorized-skills-heading" class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-xl dark:shadow-lime-900/20">
+                <h2 id="uncategorized-skills-heading" class="text-2xl md:text-3xl font-semibold mb-6 border-b-2 border-gray-400 dark:border-gray-600 pb-3 text-gray-800 dark:text-gray-100 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    Additional Skills
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                    {% for skill in uncategorized_skills %}
+                        <a href="{{ skill.get_absolute_url }}"
+                           aria-label="View details for skill: {{ skill.name }}"
+                           class="group block bg-gray-50 dark:bg-gray-700/60 p-4 rounded-lg shadow-md hover:shadow-lg dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800 transform hover:-translate-y-0.5 hover:scale-[1.02] transition-all duration-200 ease-in-out text-center">
+                            <span class="font-medium text-gray-700 dark:text-gray-200 group-hover:text-green-600 dark:group-hover:text-lime-400 transition-colors duration-200">{{ skill.name }}</span>
+                             {% if skill.proficiency_level %}
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ skill.get_proficiency_level_display }}</p>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+         {% if not categories and not uncategorized_skills %}
+             <div class="text-center py-20 px-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-green-400 dark:text-lime-500 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                   <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                   <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /> {/* Added a surrounding circle for a more 'complete' icon */}
+                 </svg>
+                <p class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-2">No Skills Added Yet</p>
+                <p class="text-gray-600 dark:text-gray-400">Skills are currently being cataloged. Please check back soon!</p>
+            </div>
+         {% endif %}
+    </div>
+
+     <div class="text-center mt-16">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

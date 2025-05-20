@@ -1,0 +1,125 @@
+{# demos/templates/demos/explainable_ai_demo.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load markdownify %} {# Ensure markdownify is loaded #}
+
+{% block title %}{{ page_title|default:"Explainable AI Demo" }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Interactive demonstration of an explainable AI model predicting Iris flower species and showing its decision rules." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"explainable AI, XAI, machine learning, decision tree, Iris dataset, model interpretation, AI transparency" }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-12">
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
+        {{ page_title|default:"Explainable AI: Iris Species Predictor" }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10">
+        Enter the measurements of an Iris flower below. A simple Decision Tree model will predict the species and show you the exact decision rules it used to arrive at the prediction.
+    </p>
+
+    {% if error_message %}
+        <div class="max-w-xl mx-auto mb-6 p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200" role="alert">
+            <strong>Error:</strong> {{ error_message }}
+        </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-indigo-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Enter Iris Features (cm)</h2>
+            <form method="post" action="{% url 'demos:explainable_ai' %}">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label for="{{ form.sepal_length.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.sepal_length.label }}</label>
+                        {{ form.sepal_length }}
+                        {% if form.sepal_length.errors %}<p class="text-red-600 dark:text-red-400 text-xs mt-1">{{ form.sepal_length.errors|striptags }}</p>{% endif %}
+                    </div>
+                     <div>
+                        <label for="{{ form.sepal_width.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.sepal_width.label }}</label>
+                        {{ form.sepal_width }}
+                        {% if form.sepal_width.errors %}<p class="text-red-600 dark:text-red-400 text-xs mt-1">{{ form.sepal_width.errors|striptags }}</p>{% endif %}
+                    </div>
+                     <div>
+                        <label for="{{ form.petal_length.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.petal_length.label }}</label>
+                        {{ form.petal_length }}
+                        {% if form.petal_length.errors %}<p class="text-red-600 dark:text-red-400 text-xs mt-1">{{ form.petal_length.errors|striptags }}</p>{% endif %}
+                    </div>
+                     <div>
+                        <label for="{{ form.petal_width.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.petal_width.label }}</label>
+                        {{ form.petal_width }}
+                        {% if form.petal_width.errors %}<p class="text-red-600 dark:text-red-400 text-xs mt-1">{{ form.petal_width.errors|striptags }}</p>{% endif %}
+                    </div>
+                </div>
+                <button type="submit"
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                    Predict & Explain
+                </button>
+            </form>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-indigo-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Prediction & Explanation</h2>
+
+            {% if prediction %}
+                <div class="mb-5 pb-4 border-b border-gray-200 dark:border-gray-700">
+                     <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Input Features:</h3>
+                     <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                        <li>Sepal Length: <strong>{{ input_features.sepal_length }} cm</strong></li>
+                        <li>Sepal Width: <strong>{{ input_features.sepal_width }} cm</strong></li>
+                        <li>Petal Length: <strong>{{ input_features.petal_length }} cm</strong></li>
+                        <li>Petal Width: <strong>{{ input_features.petal_width }} cm</strong></li>
+                     </ul>
+                </div>
+
+                <div class="mb-5 text-center">
+                     <p class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-1">Predicted Species:</p>
+                     <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400 capitalize">{{ prediction }}</p>
+                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                         (Probabilities:
+                         {% for item in probability_list %}
+                            {{ item.name }}: {{ item.probability|floatformat:1 }}%{% if not forloop.last %}, {% endif %}
+                         {% endfor %})
+                     </div>
+                </div>
+
+                {% if explanation_rules %}
+                <div class="mb-5 border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Decision Path Explanation:</h3>
+                    {# Assuming 'explanation_rules' contains Markdown strings #}
+                    <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
+                        <ol class="list-decimal list-inside space-y-2">
+                        {% for rule in explanation_rules %}
+                            <li>{{ rule|markdownify }}</li> {# Apply markdownify filter #}
+                        {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if feature_importances %}
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                     <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Feature Importances (for this tree):</h3>
+                     <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                        {% for name, importance in feature_importances %}
+                            <li>{{ name }}: {{ importance|floatformat:1 }}%</li>
+                        {% endfor %}
+                     </ul>
+                </div>
+                {% endif %}
+
+            {% else %}
+                <div class="text-center text-gray-500 dark:text-gray-400 italic py-10">
+                    Enter feature values above and click "Predict & Explain" to see the results.
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+     <div class="text-center mt-16">
+        <a href="{% url 'demos:all_demos_list' %}" class="text-indigo-600 dark:text-indigo-400 hover:underline mr-4">&larr; Back to Demos</a>
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

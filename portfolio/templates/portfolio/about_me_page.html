@@ -1,0 +1,164 @@
+{# portfolio/templates/portfolio/about_me_page.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load markdownify %}
+
+{% block title %}
+    About {% if user_profile and user_profile.full_name %}{{ user_profile.full_name }}{% else %}Me{% endif %} - {{ user_profile.tagline|default:"My Professional Journey" }}
+{% endblock title %}
+
+{% block meta_description %}
+    Learn more about {% if user_profile and user_profile.full_name %}{{ user_profile.full_name }}{% else %}me{% endif %}{% if user_profile and user_profile.full_name %},{% endif %} a dedicated and skilled professional. Discover my background, experience, and approach to work.
+{% endblock meta_description %}
+
+{% block meta_keywords %}
+    about me, {% if user_profile and user_profile.full_name %}{{ user_profile.full_name|lower }},{% endif %} profile, biography, experience, skills, professional journey, portfolio
+{% endblock meta_keywords %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-12">
+
+    <header class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-500 via-cyan-500 to-sky-600 dark:from-teal-400 dark:via-cyan-400 dark:to-sky-500 bg-clip-text text-transparent pb-2">
+            {% if user_profile.about_me_page_title %}
+                {{ user_profile.about_me_page_title }}
+            {% else %}
+                Meet {{ user_profile.full_name|default:"Me" }}
+            {% endif %}
+        </h1>
+        {% if user_profile.about_me_page_subtitle %}
+        <p class="mt-4 text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+            {{ user_profile.about_me_page_subtitle }}
+        </p>
+        {% endif %}
+    </header>
+
+    <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 p-6 sm:p-10 rounded-xl shadow-2xl dark:shadow-sky-900/30">
+        {# --- Profile Header Section --- #}
+        <section class="flex flex-col md:flex-row items-center md:items-start gap-8 mb-12 pb-12 border-b border-gray-200 dark:border-gray-700">
+            {% if user_profile.profile_picture %}
+            <div class="flex-shrink-0 w-40 h-40 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-cyan-400 to-sky-600 dark:from-cyan-500 dark:to-sky-700 flex items-center justify-center text-6xl font-bold text-white shadow-lg border-4 border-white dark:border-gray-700">
+                {# Display the first letter of the full name, or 'U' (for User) if name is not available #}
+                {{ user_profile.full_name|slice:":1"|default:"U" }}
+            </div>
+            {% else %}
+            <div class="flex-shrink-0 w-40 h-40 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-cyan-400 to-sky-600 dark:from-cyan-500 dark:to-sky-700 flex items-center justify-center text-6xl font-bold text-white shadow-lg border-4 border-white dark:border-gray-700">
+                {{ user_profile.full_name|slice:":1"|default:"U" }}
+            </div>
+            {% endif %}
+
+            <div class="text-center md:text-left flex-grow mt-4 md:mt-0">
+                <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-1">{{ user_profile.full_name|default:"Your Name" }}</h2>
+                <p class="text-xl text-cyan-600 dark:text-sky-400 font-medium mb-4">{{ user_profile.tagline|default:"Passionate Professional & Innovator" }}</p>
+                
+                {% if user_profile.about_me_intro_markdown %}
+                <div class="text-gray-700 dark:text-gray-300 leading-relaxed prose dark:prose-invert max-w-none">
+                     {{ user_profile.about_me_intro_markdown | markdownify | safe }}
+                </div>
+                {% else %}
+                 <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    A brief introduction about myself, my passions, and what drives me. I am dedicated to creating impactful solutions and continuously learning.
+                </p>
+                {% endif %}
+
+                 <div class="mt-6 flex justify-center md:justify-start space-x-5">
+                     {% if user_profile.linkedin_url %}
+                     <a href="{{ user_profile.linkedin_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ user_profile.full_name }} on LinkedIn" class="text-gray-500 dark:text-gray-400 hover:text-sky-600 dark:hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 dark:focus:ring-offset-gray-800 rounded-full transition-all duration-300 transform hover:scale-110 p-1" title="LinkedIn">
+                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"/></svg>
+                     </a>
+                     {% endif %}
+                     {% if user_profile.github_url %}
+                     <a href="{{ user_profile.github_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ user_profile.full_name }} on GitHub" class="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-offset-gray-800 rounded-full transition-all duration-300 transform hover:scale-110 p-1" title="GitHub">
+                         <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.419 2.865 8.166 6.839 9.489.5.09.682-.218.682-.484 0-.238-.009-.869-.014-1.705-2.782.602-3.369-1.34-3.369-1.34-.455-1.156-1.11-1.465-1.11-1.465-.909-.62.069-.608.069-.608 1.004.071 1.532 1.03 1.532 1.03.891 1.529 2.341 1.089 2.91.833.091-.647.349-1.086.635-1.337-2.22-.252-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.03-2.682-.103-.253-.447-1.27.098-2.645 0 0 .84-.269 2.75 1.025A9.547 9.547 0 0112 6.838c.853 0 1.732.114 2.534.338 1.91-1.294 2.748-1.025 2.748-1.025.547 1.375.203 2.392.1 2.645.64.698 1.027 1.59 1.027 2.682 0 3.842-2.338 4.687-4.566 4.935.36.308.678.917.678 1.85 0 1.336-.012 2.415-.012 2.741 0 .269.18.579.688.481A9.996 9.996 0 0022 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd"/></svg>
+                     </a>
+                     {% endif %}
+                     {% if user_profile.email %}
+                     <a href="mailto:{{ user_profile.email }}" aria-label="Email {{ user_profile.full_name }}" class="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-offset-gray-800 rounded-full transition-all duration-300 transform hover:scale-110 p-1" title="Email">
+                         <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.003 5.884L10 11.884l7.997-6M2 18h16V6l-8 5-8-5v12z"></path></svg>
+                     </a>
+                     {% endif %}
+                     {% if user_profile.personal_website_url %}
+                     <a href="{{ user_profile.personal_website_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ user_profile.full_name }}'s Personal Website" class="text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 dark:focus:ring-offset-gray-800 rounded-full transition-all duration-300 transform hover:scale-110 p-1" title="Website">
+                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.917A5.974 5.974 0 014 7.5C4 5.57 5.57 4 7.5 4c.998 0 1.902.405 2.577 1.077l.087.087.086-.087A3.482 3.482 0 0112.5 4C14.43 4 16 5.57 16 7.5c0 .694-.186 1.34-.518 1.886l-.004.007-.003.004a5.972 5.972 0 01-1.145 1.488l-4.33 3.935-4.33-3.935a5.974 5.974 0 01-1.149-1.492z" clip-rule="evenodd"></path></svg>
+                     </a>
+                     {% endif %}
+                </div>
+            </div>
+        </section>
+
+        {# --- Main Content Sections --- #}
+        <div class="space-y-12">
+            {% if user_profile.about_me_journey_markdown %}
+            <section id="journey" aria-labelledby="journey-heading">
+                <h3 id="journey-heading" class="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100 mb-5 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-cyan-500 dark:text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                    My Journey & Experience
+                </h3>
+                <div class="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {{ user_profile.about_me_journey_markdown | markdownify | safe }}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if user_profile.about_me_expertise_markdown %}
+            <section id="expertise" aria-labelledby="expertise-heading" class="border-t border-gray-200 dark:border-gray-700 pt-10">
+                <h3 id="expertise-heading" class="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100 mb-5 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-cyan-500 dark:text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
+                    Areas of Expertise
+                </h3>
+                <div class="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                     {{ user_profile.about_me_expertise_markdown | markdownify | safe }}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if user_profile.about_me_philosophy_markdown %}
+            <section id="philosophy" aria-labelledby="philosophy-heading" class="border-t border-gray-200 dark:border-gray-700 pt-10">
+                <h3 id="philosophy-heading" class="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100 mb-5 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-cyan-500 dark:text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M21 12a9 9 0 11-18 0 9 9 0 0118 0zM14.828 14.828A4 4 0 019.172 9.172" /></svg>
+                    Philosophy & Approach
+                </h3>
+                <div class="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                     {{ user_profile.about_me_philosophy_markdown | markdownify | safe }}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if user_profile.about_me_beyond_work_markdown %}
+            <section id="beyond-work" aria-labelledby="beyond-work-heading" class="border-t border-gray-200 dark:border-gray-700 pt-10">
+                <h3 id="beyond-work-heading" class="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100 mb-5 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-cyan-500 dark:text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    Beyond Work
+                </h3>
+                <div class="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                     {{ user_profile.about_me_beyond_work_markdown | markdownify | safe }}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if user_profile.about_me_cta_markdown %}
+            <section id="cta" aria-labelledby="cta-heading" class="border-t border-gray-200 dark:border-gray-700 pt-10 text-center">
+                <div class="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                     {{ user_profile.about_me_cta_markdown | markdownify | safe }}
+                </div>
+                <div class="mt-8">
+                    <a href="{% url 'portfolio:contact' %}" class="inline-block bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                        Let's Connect
+                    </a>
+                </div>
+            </section>
+            {% else %}
+            <p class="!mt-10 text-center text-lg text-gray-700 dark:text-gray-300">
+                I'm always open to discussing new projects, creative ideas, or opportunities to be part of something exciting.
+                Feel free to <a href="{% url 'portfolio:contact' %}" class="text-sky-600 dark:text-sky-400 hover:underline font-semibold">reach out</a>!
+            </p>
+            {% endif %}
+        </div>
+    </div>
+
+     <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

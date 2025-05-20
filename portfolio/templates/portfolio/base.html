@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+{% load static %}
+<script>
+    // Apply theme immediately based on localStorage or system preference
+    // This initial script should remain at the top to prevent FOUC (Flash Of Unstyled Content)
+    (function() {
+      const theme = localStorage.getItem('color-theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (theme === 'dark' || (!theme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark'); // Ensure light mode if not dark
+      }
+    })();
+</script>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>
+        {% block title %}
+            {% if page_title %}
+                {{ page_title }}
+                {% if user_profile and user_profile.full_name %}
+                    | {{ user_profile.full_name }}
+                {% elif user_profile %}
+                     | Portfolio
+                {% else %}
+                     | My Portfolio
+                {% endif %}
+            {% elif user_profile and user_profile.full_name %}
+                {{ user_profile.full_name }}'s Portfolio
+            {% else %}
+                My Deep Learning Portfolio
+            {% endif %}
+        {% endblock title %}
+    </title>
+
+    {# --- SEO Meta Tags --- #}
+    <meta name="description" content="{% block meta_description %}Portfolio website showcasing deep learning projects, skills, and blog posts by {% if user_profile and user_profile.full_name %}{{ user_profile.full_name }}{% else %}a passionate professional{% endif %}. Specializing in computer vision, NLP, and AI development.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}deep learning, machine learning, AI, artificial intelligence, portfolio, Python, TensorFlow, PyTorch, computer vision, NLP{% if user_profile and user_profile.full_name %}, {{ user_profile.full_name|lower }}{% endif %}{% endblock %}">
+    {# --- End SEO Meta Tags --- #}
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'portfolio/images/favicons/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'portfolio/images/favicons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'portfolio/images/favicons/favicon-16x16.png' %}">
+    <meta name="msapplication-TileColor" content="#da532c"> {# Customize color #}
+    <meta name="theme-color" content="#ffffff"> {# Customize color #}
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: {} } }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'portfolio/css/custom.css' %}">
+
+    {# --- Prism.js CSS --- #}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+    {# --- End Prism.js CSS --- #}
+
+    <style>
+        pre[class*="language-"] {
+            padding: 1em;
+            margin: .5em 0;
+            overflow: auto;
+            border-radius: 0.375rem; /* rounded-md */
+        }
+        code[class*="language-"],
+        pre[class*="language-"] {
+            white-space: pre-wrap;       /* Allow wrapping */
+            word-wrap: break-word;     /* Break long words */
+        }
+        /* Style for active navbar link (Desktop and Mobile) */
+        .nav-link-active {
+            font-weight: 700; /* bold */
+            color: #4f46e5; /* Tailwind's indigo-600 */
+        }
+        .dark .nav-link-active {
+            color: #818cf8; /* Tailwind's indigo-400 */
+        }
+        /* Specific active style for mobile menu items */
+        #mobile-menu .nav-link-active {
+             background-color: #e0e7ff; /* Tailwind's indigo-100 or similar */
+        }
+        .dark #mobile-menu .nav-link-active {
+            background-color: #3730a3; /* Tailwind's indigo-800 or similar */
+        }
+
+        /* Active style for the "Hire Me" button-like link */
+        .nav-button-active {
+            background-color: #0d9488 !important; /* Slightly darker teal-600 */
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+        }
+        /* Ensure content doesn't jump due to scrollbar appearing/disappearing */
+        html {
+            overflow-y: scroll;
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-stone-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 leading-normal flex flex-col min-h-screen transition-colors duration-300 ease-in-out font-['Inter',_sans-serif]">
+
+    {# --- Navbar --- #}
+    <nav class="bg-white dark:bg-gray-800 shadow-md dark:shadow-lg sticky top-0 z-50 transition-colors duration-300 ease-in-out">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="relative flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="{% url 'portfolio:index' %}" class="flex items-center space-x-2 text-xl font-bold text-gray-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition duration-300">
+                        {% comment %} Attempt to load logo, with a fallback text if it fails {% endcomment %}
+                        <img src="{% static 'portfolio/images/logo.png' %}" alt="Site Logo" class="h-8 w-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                        <span style="display:none;">Logo</span> {# Fallback text for logo #}
+                        <span>My Portfolio</span>
+                    </a>
+                </div>
+
+                <div class="hidden md:flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
+                    <div class="max-w-lg w-full lg:max-w-xs">
+                        <form action="{% url 'portfolio:search_results' %}" method="get" class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                            </div>
+                            <input type="search" name="q" placeholder="Search..." class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 rounded-md leading-5 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 sm:text-sm transition-colors duration-300 ease-in-out" value="{{ request.GET.q|default:'' }}">
+                            <button type="submit" class="hidden">Search</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="flex items-center md:hidden">
+                    <button id="theme-toggle-mobile" type="button" aria-label="Toggle dark and light theme" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 transition-colors duration-200 mr-2">
+                        <svg id="theme-toggle-sun-icon-mobile" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 7.072l.707-.707a1 1 0 10-1.414-1.414l-.707.707a1 1 0 001.414 1.414zM3 11a1 1 0 100 2H2a1 1 0 100-2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                        <svg id="theme-toggle-moon-icon-mobile" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    </button>
+                    <button id="mobile-menu-button" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg id="hamburger-icon" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg id="close-icon" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="hidden md:flex md:items-center md:ml-6">
+                    <div class="flex space-x-1">
+                        <a href="{% url 'portfolio:about_me' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'about_me' and request.resolver_match.app_name == 'portfolio' %} nav-link-active{% endif %}">About</a>
+                        <a href="{% url 'skills:skill_list' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'skill_list' and request.resolver_match.app_name == 'skills' %} nav-link-active{% endif %}">Skills</a>
+                        <a href="{% url 'portfolio:all_projects' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'all_projects' and request.resolver_match.app_name == 'portfolio' %} nav-link-active{% endif %}">Projects</a>
+                        <a href="{% url 'demos:all_demos_list' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'all_demos_list' and request.resolver_match.app_name == 'demos' %} nav-link-active{% endif %}">Demos</a>
+                        <a href="{% url 'topics:topic_list' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'topic_list' and request.resolver_match.app_name == 'topics' %} nav-link-active{% endif %}">Topics</a>
+                        <a href="{% url 'portfolio:contact' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'contact' and request.resolver_match.app_name == 'portfolio' %} nav-link-active{% endif %}">Contact</a>
+
+                        {# --- ACCOUNTS LINKS START --- #}
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'accounts:members_page' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'members_page' and request.resolver_match.app_name == 'accounts' %} nav-link-active{% endif %}">Members</a>
+                            <form action="{% url 'logout' %}" method="post" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none">Logout</button>
+                            </form>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'login' %} nav-auth-active{% endif %}">Login</a>
+                            <a href="{% url 'accounts:signup' %}" class="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'signup' and request.resolver_match.app_name == 'accounts' %} nav-auth-active{% endif %}">Sign Up</a>
+                        {% endif %}
+                        {# --- ACCOUNTS LINKS END --- #}
+
+                        <a href="{% url 'portfolio:hire_me' %}" class="ml-2 px-3 py-2 bg-teal-500 hover:bg-teal-600 text-white text-sm font-medium rounded-md shadow transition duration-200{% if request.resolver_match.url_name == 'hire_me' and request.resolver_match.app_name == 'portfolio' %} nav-button-active{% endif %}">Hire Me</a>
+                    </div>
+                    <button id="theme-toggle-desktop" type="button" aria-label="Toggle dark and light theme" class="ml-4 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 transition-colors duration-200">
+                        <svg id="theme-toggle-sun-icon-desktop" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 7.072l.707-.707a1 1 0 10-1.414-1.414l-.707.707a1 1 0 001.414 1.414zM3 11a1 1 0 100 2H2a1 1 0 100-2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                        <svg id="theme-toggle-moon-icon-desktop" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-3 pb-3 border-b border-gray-200 dark:border-gray-700 md:hidden">
+                <form action="{% url 'portfolio:search_results' %}" method="get" class="relative">
+                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                    </div>
+                    <input type="search" name="q" placeholder="Search..." class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 rounded-md leading-5 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 sm:text-sm transition-colors duration-300 ease-in-out" value="{{ request.GET.q|default:'' }}">
+                    <button type="submit" class="hidden">Search</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="{% url 'portfolio:about_me' %}" class="text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'about_me' and request.resolver_match.app_name == 'portfolio' %} nav-link-active{% endif %}">About</a>
+                <a href="{% url 'skills:skill_list' %}" class="text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'skill_list' and request.resolver_match.app_name == 'skills' %} nav-link-active{% endif %}">Skills</a>
+                <a href="{% url 'portfolio:all_projects' %}" class="text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'all_projects' and request.resolver_match.app_name == 'portfolio' %} nav-link-active{% endif %}">Projects</a>
+                <a href="{% url 'demos:all_demos_list' %}" class="text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'all_demos_list' and request.resolver_match.app_name == 'demos' %} nav-link-active{% endif %}">Demos</a>
+                <a href="{% url 'topics:topic_list' %}" class="text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'topic_list' and request.resolver_match.app_name == 'topics' %} nav-link-active{% endif %}">Topics</a>
+                <a href="{% url 'portfolio:contact' %}" class="text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200{% if request.resolver_match.url_name == 'contact' and request.resolver_match.app_name == 'portfolio' %} nav-link-active{% endif %}">Contact</a>
+                <a href="{% url 'portfolio:hire_me' %}" class="mt-1 block w-full px-3 py-2 text-center bg-teal-500 hover:bg-teal-600 text-white text-base font-medium rounded-md shadow transition duration-200{% if request.resolver_match.url_name == 'hire_me' and request.resolver_match.app_name == 'portfolio' %} nav-button-active{% endif %}">Hire Me</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow fade-in-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="bg-gray-900 dark:bg-black text-gray-400 dark:text-gray-500 py-6 mt-auto transition-colors duration-300 ease-in-out">
+        <div class="container mx-auto px-6 text-center text-sm">
+            <p>&copy; {% now "Y" %} {{ user_profile.full_name }}. All rights reserved.</p>
+            <p class="mt-1">
+                <a href="{% url 'portfolio:privacy_policy' %}" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Privacy Policy</a>
+                <span class="mx-2">|</span>
+                <a href="{% url 'portfolio:accessibility' %}" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Accessibility</a>
+                <span class="mx-2">|</span>
+                <a href="{% url 'portfolio:terms' %}" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Terms and Conditions</a>
+                <span class="mx-2">|</span>
+                <a href="{% url 'portfolio:colophon' %}" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">How I build this website (Colophon)</a>
+                <span class="mx-2">|</span>
+                Built by {{ user_profile.full_name }}, with <a href="https://www.djangoproject.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Django</a> & <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Tailwind CSS</a>.
+            </p>
+        </div>
+    </footer>
+
+    {# --- Prism.js JS --- #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    {# --- End Prism.js JS --- #}
+
+    {% block extra_scripts %}
+    {{block.super}}
+    <script src="{% static 'portfolio/js/theme-toggle.js' %}" defer></script>
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,72 @@
+{% extends "portfolio/base.html" %} {# Assuming you have a base.html template #}
+
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">Log In</h1>
+
+    {% if form.errors %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">Your username and password didn't match. Please try again.</span>
+        </div>
+    {% endif %}
+
+    {% if next %}
+        {% if user.is_authenticated %}
+            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <p>Your account doesn't have access to this page. To proceed,
+                please login with an account that has access.</p>
+            </div>
+        {% else %}
+             <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <p>Please login to see this page.</p>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}" class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+        {% csrf_token %}
+        
+        <div class="mb-4">
+            <label for="{{ form.username.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">Username:</label>
+            {{ form.username }}
+        </div>
+        
+        <div class="mb-6">
+            <label for="{{ form.password.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+            {{ form.password }}
+        </div>
+        
+        <div class="flex items-center justify-between">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Log In
+            </button>
+            <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="{% url 'password_reset' %}">
+                Forgot Password?
+            </a>
+        </div>
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+    {# If you implement signup: #}
+    <p class="text-center mt-4">Don't have an account? <a href="{% url 'accounts:signup' %}" class="text-blue-500 hover:text-blue-800">Sign up here</a></p>
+</div>
+
+<style>
+    /* Basic styling for form elements if not using Tailwind or similar */
+    /* {{ form.username }} and {{ form.password }} will render as <input> tags */
+    input[type="text"], input[type="password"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #cbd5e0;
+        border-radius: 0.25rem;
+        box-sizing: border-box; /* Important for width calculation */
+        margin-bottom: 0.5rem; /* Spacing below input */
+    }
+    label {
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,136 @@
+{# demos/templates/demos/flight_deal_finder_demo.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title|default:"Flight Deal Finder Demo" }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Find simulated cheap flight deals. Enter your origin, destination (IATA codes), and target price." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"flight deals, cheap flights, travel, demo, python, django" }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-12">
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500 bg-clip-text text-transparent">
+        {{ page_title|default:"Flight Deal Finder Demo" }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10">
+        Enter your origin and destination IATA codes (e.g., LON for London, PAR for Paris) and your maximum target price.
+        This demo uses a predefined set of sample flight data to simulate finding a deal. No real flight searches are performed.
+    </p>
+
+    {% if error_message %}
+        <div class="max-w-xl mx-auto mb-6 p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200" role="alert">
+            <strong class="font-semibold">Error:</strong> {{ error_message }}
+        </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        {# Input Form Card #}
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-blue-900/20">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Search for Deals</h2>
+            <form method="post" action="{% url 'demos:flight_deal_finder' %}">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    {{ form.origin_city_iata.label_tag }}
+                    {{ form.origin_city_iata }}
+                    {% if form.origin_city_iata.errors %}
+                        {% for error in form.origin_city_iata.errors %}
+                            <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    {{ form.destination_city_iata.label_tag }}
+                    {{ form.destination_city_iata }}
+                    {% if form.destination_city_iata.errors %}
+                        {% for error in form.destination_city_iata.errors %}
+                            <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="mb-6">
+                    {{ form.target_price.label_tag }}
+                    {{ form.target_price }}
+                    {% if form.target_price.errors %}
+                         {% for error in form.target_price.errors %}
+                            <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                 {% if form.non_field_errors %}
+                    <div class="mb-4 p-3 rounded-md bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-200">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <button type="submit"
+                        class="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                    Find My Deal
+                </button>
+            </form>
+        </div>
+
+        {# Results Card #}
+        <div id="results-card" aria-live="polite" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-blue-900/20 min-h-[200px] flex flex-col">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Deal Status</h2>
+            <div class="flex-grow">
+                {% if cheapest_flight %}
+                    <div class="mb-4 border-b border-gray-200 dark:border-gray-700 pb-3">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Cheapest Flight Found:</h3>
+                        <p class="text-gray-800 dark:text-gray-200">
+                            <strong>From:</strong> {{ cheapest_flight.origin_airport }}
+                            <strong>To:</strong> {{ cheapest_flight.destination_airport }}
+                        </p>
+                        <p class="text-gray-800 dark:text-gray-200 font-semibold text-2xl mt-1">
+                            Price: £{{ cheapest_flight.price|floatformat:2|intcomma }}
+                        </p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            Dates: {{ cheapest_flight.out_date }} to {{ cheapest_flight.return_date }}
+                        </p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            Stops: {% if cheapest_flight.stops == 0 %}Direct{% else %}{{ cheapest_flight.stops }}{% if cheapest_flight.via_city %} via {{ cheapest_flight.via_city }}{% endif %}{% endif %}
+                        </p>
+                    </div>
+                     <div class="mb-4">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Your Max Target Price:</h3>
+                        <p class="text-gray-600 dark:text-gray-300 font-semibold text-lg">£{{ target_price_formval|floatformat:2|intcomma }}</p>
+                    </div>
+
+                    {% if alert_message %}
+                        <div class="mt-4 p-4 rounded-md 
+                            {% if 'Great news' in alert_message or 'Good deal' in alert_message %}bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200
+                            {% elif 'matches' in alert_message %}bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200
+                            {% else %}bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200{% endif %}">
+                            <p class="font-medium">{{ alert_message }}</p>
+                        </div>
+                    {% endif %}
+
+                {% elif no_flights_found and request.method == "POST" and not form.errors %}
+                     <div class="text-center text-gray-500 dark:text-gray-400 italic py-5">
+                         Sorry, no flights found in our sample data for the route {{ submitted_origin }} to {{ submitted_destination }}. Try other popular routes like LON to PAR, or LON to NYC.
+                     </div>
+                {% elif not error_message and request.method == "POST" and not form.errors %}
+                     <div class="text-center text-gray-500 dark:text-gray-400 italic py-5">
+                         Please check your input.
+                     </div>
+                {% elif not error_message %}
+                    <div class="text-center text-gray-500 dark:text-gray-400 italic py-10 h-full flex flex-col justify-center items-center">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 dark:text-gray-500 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                         </svg>
+                        <p>Enter your flight preferences to see if a deal is available in our sample data.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-16">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to All Demos</a>
+    </div>
+</div>
+{% endblock %}

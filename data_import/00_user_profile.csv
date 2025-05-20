@@ -1,0 +1,194 @@
+site_identifier,full_name,tagline,location,email,phone_number,short_bio_html,profile_picture_url,linkedin_url,github_url,personal_website_url,cv_url,default_meta_description,default_meta_keywords,about_me_intro_markdown,about_me_journey_markdown,about_me_expertise_markdown,about_me_philosophy_markdown,about_me_beyond_work_markdown,hire_me_intro_markdown,hire_me_seeking_markdown,hire_me_strengths_markdown,hire_me_availability_markdown,skills_overview_ml_markdown,skills_overview_datasci_markdown,skills_overview_general_markdown,privacy_policy_markdown,terms_conditions_markdown,accessibility_statement_markdown,skills_overview_ml_title,skills_overview_datasci_title,skills_overview_general_title,about_me_introduction,about_me_details
+main_profile,Julian Stone,Passionate Deep Learning Engineer & AI Researcher & Data Scientist,"Stoke-on-Trent, UK",julianstone1969@gmail.com,07877529634,<p>Self-motivated web developer and data science enthusiast with a strong foundation in Python and web technologies.</p>,https://your-domain.com/static/portfolio/images/profile_large.jpg,https://linkedin.com/in/julianpstone,https://github.com/JPStone2022,http://www.julianstone.co.uk,https://your-domain.com/static/portfolio/Julian-Stone-CV-2025.pdf,"Portfolio of Julian Stone, showcasing projects and skills in Web Development, Data Science, Python, and Machine Learning.","julian stone, portfolio, web developer, data scientist, python, machine learning, stoke-on-trent","I am a self-motivated and enthusiastic person with excellent all-round team working skills, and the ability to work on my own initiative when the need arises. I am good at remaining calm and focused when under pressure to meet set targets and deadlines; and take pride in maintaining work of a consistently high standard. In addition, I am committed to the completion of assigned tasks on-time, and I am able to communicate effectively across all levels.","My professional journey includes **20 years of experience** as a self-employed Web Designer and Affiliate Marketing Web Developer, from July 2002 to 2023. This role encompassed comprehensive web design and development, affiliate marketing strategies including SEO best practices, and robust PHP & MySQL programming to create dynamic and responsive web pages.
+
+More recently, I have dedicated myself to expanding my expertise in the data science domain. I successfully completed ""100 Days of Code: The Complete Python Pro Bootcamp,"" an intensive online course by Dr. Angela Wu. Furthermore, I have completed a suite of data science career path courses on Codecademy, covering Analytics, Inference Specialist, Machine Learning, and Natural Language Processing Specialist tracks. My commitment to learning also led me to complete the Data Engineer and Machine Learning / AI Engineer career paths on Codecademy.
+
+My foundational education includes a **BA in Business Decision Analysis** from Staffordshire University, obtained in July 2000. Complementing my degree, I hold various diplomas and certificates in diverse areas such as Level 3 Cyber Security, Level 3 Personal Training, Nutrition, Diabetes Care, and Understanding Coding.","My core technical expertise encompasses a range of skills:
+
+* **Web Development:** Proficient in HTML and CSS (including HTML5), and JavaScript for enhancing web page functionality. Skilled in PHP & MySQL for developing dynamic, responsive web applications. I also have a basic understanding of Ruby and Ruby on Rails.
+* **Python for Data Science:** I possess a well-rounded understanding of Python's application in data science, including practical experience with libraries such as Pandas, NumPy, Matplotlib, Scikit-Learn, TensorFlow, Keras, and PyTorch. I am also familiar with Python frameworks like Flask and Django.
+* **General IT & Analytical Skills:** My skillset includes a solid knowledge of computer operating systems, hardware, and software. I am thorough, pay close attention to detail, and possess strong analytical thinking and problem-solving capabilities. I am known for my persistence, determination, and ability to use my initiative effectively. I also have a good understanding of mathematics.
+* **Cyber Security:** I have an understanding of cyber security practices, with experience using tools like WireShark and Maltego.","I am dedicated to maintaining a consistently high standard in all my work and am committed to the timely completion of assigned tasks. My approach is characterized by flexibility and a willingness to adapt to new challenges. I am an effective communicator across all levels. As a self-motivated and enthusiastic individual, I thrive in team environments while also being fully capable of working independently when required.","When I'm not immersed in coding and data analysis, I enjoy dedicating time to continuous learning through online courses, staying abreast of the latest technological advancements, and applying my skills to personal projects that pique my interest.","I'm a results-oriented and self-motivated **Web Developer and Data Science Enthusiast** with a passion for applying technology to solve complex problems. With extensive experience in **Web Design & Development (PHP, MySQL, HTML, CSS, JavaScript)** and newly acquired, comprehensive skills in **Python and Data Science (Pandas, NumPy, Scikit-Learn, TensorFlow, Flask, Django)**, I am currently seeking new and challenging opportunities. Whether you're looking for a dedicated team member for your Stoke-on-Trent based company, a remote contributor, or need specialized expertise for a specific project, let's explore how we can collaborate.","* Challenging roles such as **Web Developer**, **Python Developer**, **Junior Data Scientist/Analyst**, or similar positions that leverage my dual expertise in web technologies and data science.
+* Opportunities to apply my 20 years of web development experience alongside my recent, in-depth training in data science and machine learning.
+* Work on impactful projects, contributing to dynamic web solutions and/or deriving insights from data.
+* Collaborative, forward-thinking team environments that value continuous learning, practical application of skills, and initiative.
+* Full-time or contract roles, open to remote work or positions based in/around Stoke-on-Trent.","* **Extensive Web Expertise:** 20 years' experience as a self-employed Web Designer/Developer and in Affiliate Marketing, including SEO best practices.
+* **Backend Development:** Proficient in PHP & MySQL programming, capable of building dynamic, responsive web pages.
+* **Frontend Development:** Solid understanding of HTML, CSS (including HTML5), and JavaScript for creating engaging user interfaces and adding functionality.
+* **Python & Data Science:** Well-rounded understanding of Python for data science, including libraries like Pandas, NumPy, Matplotlib, Scikit-Learn, TensorFlow, Keras, and PyTorch.
+* **Python Frameworks:** Experience with Flask and Django for web application development.
+* **Analytical & Problem-Solving:** Strong analytical thinking skills, thoroughness, attention to detail, persistence, and determination in solving problems.
+* **Adaptability & Initiative:** Flexible, willing to change, and able to use my initiative to meet targets and deadlines effectively.
+* **Broad IT Knowledge:** Good understanding of computer operating systems, hardware, software, and cyber security practices (WireShark, Maltego). Basic familiarity with Ruby and Ruby on Rails.","I am currently available for new full-time opportunities or contract projects. I am eager to discuss how my skills and extensive experience can benefit your team or project, whether locally in Stoke-on-Trent or remotely.","* **TensorFlow/Keras:** End-to-end platform for building and deploying ML models, especially strong in deep learning with the user-friendly Keras API.
+* **PyTorch:** Popular deep learning framework known for its flexibility, Pythonic feel, and strong community support, particularly in research.
+* **Hugging Face Transformers:** Provides thousands of pre-trained models and tools focused on NLP and increasingly vision tasks, simplifying state-of-the-art model usage.
+* **spaCy/NLTK:** Core libraries for Natural Language Processing tasks like tokenization, part-of-speech tagging, named entity recognition, etc.
+* **Scikit-learn:** Fundamental library for classical machine learning algorithms (regression, classification, clustering, etc.), preprocessing, and model evaluation.
+* **Natural Language Processing (NLP):** Processing and understanding human language (text or speech) for tasks like translation, sentiment analysis, text generation, and question answering.","* **Python:** Primary language for ML/DS due to its extensive libraries, readability, and large community. Used across the entire workflow.
+* **Pandas & NumPy:** Essential libraries for data manipulation (DataFrames) and efficient numerical computation (arrays, linear algebra) in Python.
+* **Matplotlib & Seaborn:** Standard libraries for creating static, animated, and interactive data visualizations in Python.
+* **AI Engineering & System Design:** Building scalable, reliable, and maintainable systems that incorporate AI/ML components, considering infrastructure, data flow, and integration.
+* **Data Analysis & Visualization:** Exploring, cleaning, transforming, and visualizing data to uncover insights, patterns, and trends, often as a precursor to modeling.
+* **Statistical Modeling:** Applying statistical principles and techniques to model relationships in data, perform inference, and test hypotheses.
+* **Data Science Methodologies:** Completed Codecademy career paths in Analytics, ML, NLP, Inference.","* **SQL:** Standard language for querying and managing data stored in relational databases (PostgreSQL, MySQL, SQLite, etc.). Essential for data extraction and preparation.
+* **Analytical & Problem Solving:** Strong analytical thinking and problem-solving capabilities.
+* **Attention to Detail:** Thoroughness and precision in work.
+* **Git/GitHub/GitLab:** Version control system and platforms crucial for tracking code changes, collaboration, and managing code repositories.
+* **Cyber Security (Basic):** Understanding of practices with WireShark and Maltego.
+* **Linux/Bash Scripting:** Common operating system for servers and development; Bash scripting used for automation and command-line operations.
+* **Ruby & Ruby on Rails (Basic):** Basic understanding of the Ruby on Rails framework.
+* **Flask & Django:** Developing web applications and APIs using Python frameworks.
+* **Business Decision Analysis (BA):** Academic background providing analytical perspectives.","**Last Updated:** May 3, 2025
+
+Thank you for visiting Julian Stone's portfolio website. This Privacy Policy explains how I collect, use, and protect any personal information you may provide while using this site.
+
+**1. Information I Collect**
+
+The primary way I collect personal information on this site is through the **Contact Form**. When you use the contact form, you may provide:
+
+* **Name:** To know who is contacting me.
+* **Email Address:** To respond to your inquiry.
+* **Subject & Message:** The content of your message, query, or feedback.
+
+This website does not currently use tracking cookies for analytics (like Google Analytics) or advertising. Necessary cookies might be used by the web framework (Django) for basic site functionality like security (CSRF protection) but are not used to track your activity across other sites.
+
+**2. How I Use Your Information**
+
+The personal information collected via the contact form is used solely for the purpose of:
+
+* Responding to your inquiries, comments, or requests.
+* Communicating with you regarding potential collaborations or opportunities if initiated by you.
+
+I do not sell, trade, or rent your personal information to others.
+
+**3. Data Storage and Security**
+
+I take reasonable technical measures to protect the information submitted via the contact form. However, no method of transmission over the Internet or electronic storage is 100% secure.
+
+* Contact form submissions may be stored temporarily in email logs or on the hosting platform (e.g., PythonAnywhere, Render) as part of the standard operation of sending/receiving email or processing web requests.
+* I will retain the information only as long as necessary to address your inquiry or for potential follow-up communication initiated by you.
+
+**4. Third-Party Services**
+
+This website is hosted on [Mention your hosting provider, e.g., PythonAnywhere, Render, Heroku]. The hosting provider may collect standard server logs (like IP addresses, browser types, access times) for security and operational purposes, subject to their own privacy policies. I do not typically access or use these logs for tracking individuals.
+
+**5. Your Rights**
+
+Depending on your location, you may have rights regarding your personal information, such as the right to access, correct, or request deletion of the data I hold about you (primarily data submitted via the contact form).
+
+To exercise these rights, please contact me using the details provided below or via the contact form itself. I will respond to your request within a reasonable timeframe.
+
+**6. Children's Privacy**
+
+This website is not intended for children under the age of 13 (or the relevant age in your jurisdiction). I do not knowingly collect personal information from children.
+
+**7. Changes to This Policy**
+
+I may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated ""Last Updated"" date.
+
+**8. Contact Information**
+
+If you have any questions about this Privacy Policy, please contact Julian.
+
+---","**Last Updated:** May 5, 2025
+
+Welcome to my personal portfolio website. Please read these Terms and Conditions (""Terms"") carefully before using the website located at Julian's Portfolio (the ""Service"") operated by Julian Stone (""I"", ""me"", ""my"").
+
+Your access to and use of the Service is conditioned upon your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who wish to access or use the Service. By accessing or using the Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you do not have permission to access the Service.
+
+## 1. Use of Website
+
+This website and its content (including blog posts, project descriptions, images, demos, and code snippets) are provided primarily for informational and demonstration purposes to showcase my skills and experience in Data Science, Machine Learning, and AI development.
+
+You are granted a limited license to access and use the content for personal, non-commercial review.
+
+You agree not to use the website in any way that causes, or may cause, damage to the website or impairment of the availability or accessibility of the website; or in any way which is unlawful, illegal, fraudulent, or harmful.
+
+## 2. Intellectual Property
+
+The content created by me on this Service, including text (blog posts, project descriptions, etc.), graphics, logos, and code examples (unless otherwise stated or sourced), is my property and protected by copyright and other intellectual property laws.
+
+Code snippets provided are for illustrative purposes. While concepts may be reused, direct copying for commercial projects without understanding or attribution may not be appropriate. Look for specific licenses if provided, otherwise assume standard copyright applies.
+
+## 3. Interactive Demos
+
+The interactive demos provided on this website (e.g., Image Classification, Sentiment Analysis, Explainable AI, Data Analysis, ETL Simulation, etc.) are for demonstration and educational purposes only.
+
+They may use simplified models, simulated data, or pre-trained models that may not be suitable for production use.
+
+* **Accuracy Not Guaranteed:** No guarantee is made regarding the accuracy, reliability, or performance of the predictions or outputs generated by these demos.
+* **Use At Your Own Risk:** You interact with these demos at your own risk. I am not liable for any decisions made or actions taken based on the output of these demos. Do not submit sensitive personal information into the demo interfaces.
+
+## 4. Disclaimers
+
+The information provided on this website (including blog posts, project details, and explanations) is for general informational purposes only. It does not constitute professional advice (e.g., technical, financial, legal).
+
+While I strive to keep information accurate and up-to-date, I make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability with respect to the website or the information contained within it. Any reliance you place on such information is therefore strictly at your own risk.
+
+## 5. Limitation of Liability
+
+In no event shall I be liable for any loss or damage including without limitation, indirect or consequential loss or damage, or any loss or damage whatsoever arising from loss of data or profits arising out of, or in connection with, the use of this website or its demos.
+
+## 6. Third-Party Links
+
+This website may contain links to third-party websites or services that are not owned or controlled by me (e.g., links to projects on GitHub, product recommendations, external datasets or papers).
+
+I have no control over, and assume no responsibility for the content, privacy policies, or practices of any third-party websites or services. You acknowledge and agree that I shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with the use of or reliance on any such content, goods, or services available on or through any such websites or services.
+
+## 7. Privacy Policy
+
+Your use of the Service is also governed by our Privacy Policy. Please review the Privacy Policy to understand practices regarding personal information collected via the contact form.
+
+## 8. Changes to Terms
+
+I reserve the right, at my sole discretion, to modify or replace these Terms at any time. If a revision is material, I will provide notice prior to any new terms taking effect (e.g., by updating the ""Last Updated"" date). What constitutes a material change will be determined at my sole discretion.
+
+By continuing to access or use the Service after any revisions become effective, you agree to be bound by the revised terms.
+
+## 9. Governing Law (Optional)
+
+These Terms shall be governed and construed in accordance with the laws of England and Wales, without regard to its conflict of law provisions. (You may omit this or consult a legal professional about appropriate jurisdiction).
+
+## 10. Contact Information
+
+If you have any questions about these Terms, please contact me:
+
+* Via Contact Form: Contact Julian
+
+*Disclaimer: This is a sample Terms and Conditions document and may not be fully compliant with all legal requirements in all jurisdictions. It is recommended to consult with a legal professional for advice specific to your situation.*","I am committed to ensuring digital accessibility for people with disabilities. I am continually improving the user experience for everyone and applying relevant accessibility standards.
+
+## Conformance Status
+
+The [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/standards-guidelines/wcag/) defines requirements for designers and developers to improve accessibility for people with disabilities. This website aims to conform substantially with WCAG 2.1 level AA.
+
+While I strive to adhere to the accepted guidelines and standards for accessibility and usability, it is not always possible to do so in all areas of the website, particularly with some embedded third-party content or complex interactive demos.
+
+## Technical Specifications
+
+Accessibility of this website relies on the following technologies to work with the particular combination of web browser and any assistive technologies or plugins installed on your computer:
+
+* HTML
+* CSS (Tailwind CSS)
+* JavaScript
+
+These technologies are relied upon for conformance with the accessibility standards used.
+
+## Accessibility Features Implemented
+
+* **Semantic HTML:** Using appropriate HTML5 tags (nav, main, section, article, etc.) to define page structure.
+* **Keyboard Navigation:** Efforts have been made to ensure interactive elements are navigable using a keyboard.
+* **Focus Indicators:** Visible focus rings are applied to interactive elements.
+* **Alt Text:** Alternative text descriptions are provided for meaningful images.
+* **Responsive Design:** The layout adapts to different screen sizes and orientations.
+* **Color Contrast (Ongoing):** We strive to maintain sufficient text and background color contrast, and background elements, including in dark mode.
+* **Resizable Text:** Text can be resized using standard browser controls without loss of content or functionality.
+
+## Feedback & Contact Information
+
+I welcome your feedback on the accessibility of this portfolio website. If you encounter accessibility barriers or have suggestions for improvement, please let me know:
+
+* **Contact Form:** Use the Contact Form
+
+I try to respond to feedback within a reasonable timeframe.
+
+This statement was created on May 3, 2025",Deep Learning & Machine Learning Libraries,Python & Data Science,General IT & Other Skills,"I'm a Deep Learning Engineer, with a strong focus on Data Science, Data Analysis, and AI Development.","I am passionate about leveraging my background in Python and a suite of Data Science tools, to create impactful solutions and derive meaningful insights from data. I thrive on continuous learning and tackling new challenges. I enjoy exploring advancements in generative models, building robust machine learning pipelines."

@@ -1,0 +1,107 @@
+{# portfolio/templates/portfolio/certificates.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% load markdownify %} {# ADDED markdownify load tag #}
+
+{% block title %}
+    {% if page_title %}
+        {{ page_title }}
+        {% if user_profile and user_profile.full_name %}
+            | {{ user_profile.full_name }}
+        {% endif %}
+    {% elif user_profile and user_profile.full_name %}
+        {{ user_profile.full_name }}'s Certificates - Portfolio
+    {% else %}
+        Certificates - Portfolio
+    {% endif %}
+{% endblock title %}
+
+{# MODIFIED meta_description to process {{ meta_description }} if it's Markdown #}
+{% block meta_description %}
+    {% if meta_description %}
+        {{ meta_description|markdownify|striptags|truncatewords:25 }}
+        {% if user_profile and user_profile.full_name and user_profile.full_name|lower not in meta_description|lower %}
+            - {{ user_profile.full_name }}
+        {% endif %}
+    {% elif user_profile and user_profile.full_name %}
+        A collection of certificates and qualifications achieved by {{ user_profile.full_name }}.
+    {% else %}
+        A collection of certificates and qualifications.
+    {% endif %}
+{% endblock meta_description %}
+
+{% block meta_keywords %}
+    {% if meta_keywords %}
+        {{ meta_keywords }}
+    {% else %}
+        Certificates, awards, qualifications, professional development
+    {% endif %}
+    {% if user_profile and user_profile.full_name %}
+        {% if user_profile.full_name|lower not in meta_keywords|lower %}
+            , {{ user_profile.full_name|lower }}
+        {% endif %}
+    {% endif %}
+    , portfolio
+{% endblock meta_keywords %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+        Certificates
+    </h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+
+        {% if certificates %}
+            {% for cert in certificates %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-blue-900/20 overflow-hidden flex flex-col items-center p-6 transition-transform duration-300 ease-in-out transform hover:scale-[1.03] hover:shadow-xl">
+                    <div class="flex-shrink-0 w-24 h-24 mb-4">
+                        {% if cert.logo_image %}
+                            <img src="{{ cert.logo_image.url }}"
+                                 alt="{{ cert.issuer }} Logo"
+                                 class="w-full h-full object-contain rounded-md border border-gray-200 dark:border-gray-700 p-1 bg-white dark:bg-gray-300">
+                                 {% else %}
+                                 <div class="w-full h-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center rounded-md border border-gray-300 dark:border-gray-500 text-gray-400 dark:text-gray-300">
+                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                                       <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                     </svg>
+                                 </div>
+                             {% endif %}
+                    </div>
+                    <div class="text-center flex-grow flex flex-col">
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-1">{{ cert.title }}</h2>
+                        <p class="text-gray-600 dark:text-gray-400 mb-2 text-sm">Issued by: <span class="font-medium text-gray-700 dark:text-gray-300">{{ cert.issuer }}</span></p>
+                        {% if cert.date_issued %}
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">{{ cert.date_issued|date:"F Y" }}</p>
+                        {% endif %}
+                        {# Assuming cert.description is a field that might contain Markdown #}
+                        {% if cert.description %}
+                        <div class="text-sm text-gray-600 dark:text-gray-400 mb-3 prose prose-sm dark:prose-invert max-w-none">
+                            {{ cert.description | markdownify }}
+                        </div>
+                        {% endif %}
+                        <div class="mt-auto pt-3">
+                            {% if cert.certificate_file %}
+                                <a href="{{ cert.certificate_file.url }}"
+                                   target="_blank" rel="noopener noreferrer"
+                                   class="text-blue-600 dark:text-blue-400 hover:underline font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 rounded">
+                                    View Certificate File &rarr;
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-gray-600 dark:text-gray-400 md:col-span-2 lg:col-span-3">No certificates have been added yet.</p>
+        {% endif %}
+
+    </div>
+
+    <div class="text-center mt-16">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+
+</div>
+{% endblock %}

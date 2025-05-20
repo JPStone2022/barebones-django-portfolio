@@ -1,0 +1,98 @@
+{# portfolio/templates/portfolio/cv_page.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% load markdownify %} {# ADDED markdownify load tag #}
+
+{% block title %}
+    {% if page_title %}
+        {{ page_title }}
+        {% if user_profile and user_profile.full_name %}
+            | {{ user_profile.full_name }}
+        {% endif %}
+    {% else %}
+        CV / Resume
+        {% if user_profile and user_profile.full_name %}
+            - {{ user_profile.full_name }}'s Portfolio
+        {% else %}
+            - Portfolio
+        {% endif %}
+    {% endif %}
+{% endblock title %}
+
+{# MODIFIED meta_description to process {{ meta_description }} if it's Markdown #}
+{% block meta_description %}
+    {% if meta_description %}
+        {{ meta_description|markdownify|striptags|truncatewords:30 }}
+        {% if user_profile and user_profile.full_name and user_profile.full_name|lower not in meta_description|lower %}
+            Download the CV of {{ user_profile.full_name }}.
+        {% endif %}
+    {% elif user_profile and user_profile.full_name %}
+        View and download the CV / Resume for {{ user_profile.full_name }}, detailing professional experience in machine learning, web development, and data science.
+    {% else %}
+        View and download the CV / Resume, detailing professional experience and skills.
+    {% endif %}
+{% endblock meta_description %}
+
+{% block meta_keywords %}
+    {% if meta_keywords %}
+        {{ meta_keywords }}
+    {% else %}
+        CV, resume, curriculum vitae, downloadable pdf
+    {% endif %}
+    {% if user_profile and user_profile.full_name %}
+        {% if user_profile.full_name|lower not in meta_keywords|lower %}
+            , {{ user_profile.full_name|lower }}
+        {% endif %}
+    {% endif %}
+    , portfolio, experience, skills
+{% endblock meta_keywords %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-800 dark:text-gray-100 mb-12">My CV / Resume</h1>
+
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg dark:shadow-blue-900/20 transition-colors duration-300 ease-in-out">
+
+        {# Optional: Add a section for a brief intro or highlights using Markdown if desired #}
+        {% if cv_intro_markdown %}
+        <div class="mb-8 prose dark:prose-invert max-w-none">
+            {{ cv_intro_markdown | markdownify }}
+        </div>
+        {% endif %}
+
+        <div class="mb-8 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow">
+            <iframe src="{% static 'portfolio/files/Julian-Stone_CV_Redacted.pdf' %}" {# *** UPDATE FILENAME HERE *** #}
+                    width="100%"
+                    height="700px"
+                    style="border: none;"
+                    title="CV Document Viewer">
+                <p class="p-4 text-red-600 dark:text-red-400">
+                    Your browser does not support embedded PDFs.
+                    <a href="{% static 'portfolio/files/Julian-Stone_CV_Redacted.pdf' %}" {# *** UPDATE FILENAME HERE *** #}
+                       class="text-blue-600 dark:text-blue-400 hover:underline"
+                       target="_blank"
+                       download>
+                       Please download the PDF to view it.
+                    </a>
+                </p>
+            </iframe>
+        </div>
+
+        <div class="text-center">
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">If the preview doesn't load correctly, you can download the file directly:</p>
+            <a href="{% static 'portfolio/files/Julian-Stone_CV.pdf' %}" {# *** UPDATE FILENAME HERE *** #}
+               target="_blank"
+               download
+               class="inline-block bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                Download CV (PDF)
+            </a>
+        </div>
+
+    </div>
+
+     <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline">&larr; Back to Home</a>
+    </div>
+
+</div>
+{% endblock %}
