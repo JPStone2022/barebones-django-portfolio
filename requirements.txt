@@ -26,8 +26,7 @@ psycopg2==2.9.10
 #bleach
 #django-ratelimit
 requests
-#beautifulsoup4
-#pandas
+beautifulsoup4
 #statsmodels
 #sklearn
 #matplotlib
