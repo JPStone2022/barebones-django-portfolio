@@ -30,4 +30,6 @@ urlpatterns = [
     path('concepts/<slug:demo_slug>/', views.generic_demo_view, name='generic_demo_detail'), # New generic view
     path('keras-nmt-demo/', views.keras_nmt_demo_demo_view, name='keras_nmt_demo'),
     #path('ml-charts-interactive/', views.static_ml_visualization, name='ml_charts_interactive'),
+    # New Cybersecurity & Data Science Demo URL
+    path('cybersecurity-data-science/', views.cybersecurity_ds_demo_view, name='cybersecurity_ds_demo'),
 ]

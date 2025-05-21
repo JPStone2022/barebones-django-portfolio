@@ -224,38 +224,41 @@ if not DEBUG:
     # ... other production security settings ...
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') # Likely needed for Render
 
-
-# --- Markdownify Configuration ---
-MARKDOWNIFY_STRIP = False  # Keep HTML tags produced by Markdown conversion
-MARKDOWNIFY_WHITELIST_TAGS = [ # Common and useful tags
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    'p', 'strong', 'em', 'a', 'span', 'div',
-    'ul', 'ol', 'li', 'br',
-    'img',
-    'pre', 'code', 'blockquote',
-    'table', 'thead', 'tbody', 'tr', 'th', 'td',
-    'hr', 'del', 'ins', 'sup', 'sub',
-    # Add other tags you explicitly trust or need
-]
-# Ensure these are the Python-Markdown extension names
-MARKDOWNIFY_MARKDOWN_EXTENSIONS = [
-    'markdown.extensions.fenced_code',    # For ```code``` blocks
-    'markdown.extensions.codehilite',     # For syntax highlighting (requires Pygments)
-    'markdown.extensions.tables',         # For tables
-    'markdown.extensions.nl2br',          # For converting single newlines to <br>
-    'markdown.extensions.extra',          # Includes abbreviations, attribute lists, footnotes, smartypants, etc.
-    'markdown.extensions.toc',            # For Table of Contents (if you use [TOC])
-    'markdown.extensions.sane_lists',     # For more predictable list behavior
-    'markdown.extensions.admonition',     # For admonition blocks (note, warning, etc.)
-    # 'markdown.extensions.wikilinks',    # If you want [[WikiLink]] style links
-    # 'markdown.extensions.meta',         # For metadata at the top of Markdown text
-]
-# Optional: Configure CodeHilite if you're using it
-MARKDOWNIFY_CODEHILITE_CSS_CLASS = 'codehilite' # Default is 'codehilite'
-# You'll need to include CSS for Pygments highlighting in your base template.
-# Example: pygmentize -S default -f html > static/css/pygments.css
-# And then link pygments.css in your base.html
-
+MARKDOWNIFY = {
+    "default": {
+        "STRIP": False,  # Keep HTML tags produced by Markdown conversion
+        "WHITELIST_TAGS": [ # Common and useful tags
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'p', 'strong', 'em', 'a', 'span', 'div',
+            'ul', 'ol', 'li', 'br',
+            'img',
+            'pre', 'code', 'blockquote',
+            'table', 'thead', 'tbody', 'tr', 'th', 'td',
+            'hr', 'del', 'ins', 'sup', 'sub',
+            # Add other tags you explicitly trust or need
+        ],
+        "MARKDOWN_EXTENSIONS": [
+            'markdown.extensions.fenced_code',    # For ```code``` blocks
+            'markdown.extensions.codehilite',     # For syntax highlighting (requires Pygments)
+            'markdown.extensions.tables',         # For tables
+            'markdown.extensions.nl2br',          # For converting single newlines to <br>
+            'markdown.extensions.extra',          # Includes abbreviations, attribute lists, footnotes, smartypants, etc.
+            'markdown.extensions.toc',            # For Table of Contents (if you use [TOC])
+            'markdown.extensions.sane_lists',     # For more predictable list behavior
+            'markdown.extensions.admonition',     # For admonition blocks (note, warning, etc.)
+        ],
+        "CODEHILITE_CSS_CLASS": 'codehilite', # Default is 'codehilite'
+        # Note: Other settings like WHITELIST_ATTRS, WHITELIST_STYLES, etc.
+        # would also go in here if you were using them.
+        # Check the documentation for all available options.
+    }
+    # You can define other profiles here if needed, e.g.:
+    # "alternative": {
+    #     "STRIP": True,
+    #     "WHITELIST_TAGS": ['p', 'a'],
+    #     ...
+    # }
+}
 # --- End Markdownify Configuration ---
 
 LOGGING = {
